@@ -9,10 +9,10 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100vh; background: #050505; display: flex; justify-content: center; align-items: flex-start; font-family: system-ui, -apple-system, sans-serif; }
-    #root { width: 390px; min-height: 100vh; background: #0A0A0A; color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid #171717; border-right: 1px solid #171717; }
+    body { min-height: 100vh; background: #070604; display: flex; justify-content: center; align-items: flex-start; font-family: system-ui, -apple-system, sans-serif; }
+    #root { width: 390px; min-height: 100vh; background: #0D0B08; color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid #1D1913; border-right: 1px solid #1D1913; }
     ::-webkit-scrollbar { width: 0; height: 0; }
-    @keyframes glow { 0%,100% { box-shadow: 0 0 10px #D4AF3755; } 50% { box-shadow: 0 0 24px #D4AF3790; } }
+    @keyframes glow { 0%,100% { box-shadow: 0 0 7px #C8952A33; } 50% { box-shadow: 0 0 14px #C8952A44; } }
     @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
@@ -22,9 +22,9 @@
 
 /* ── DESIGN TOKENS ─────────────────────── */
 const C = {
-  bg:'#0A0A0A', card:'#141414', card2:'#1A1A1A',
-  gold:'#D4AF37', goldDim:'#D4AF3760', goldBg:'#1D1602',
-  text:'#FFFFFF', muted:'#888888', line:'#252525',
+  bg:'#0D0B08', card:'#12100D', card2:'#17130F',
+  gold:'#C8952A', goldDim:'#C8952A55', goldBg:'#1A1409',
+  text:'#F8F6F2', muted:'#95897A', line:'#2A241D',
   success:'#59B17A', danger:'#D26A6A', blue:'#4A9EFF',
 };
 
@@ -39,6 +39,7 @@ const TRACKS = [
 const MOODS = ['For You','Chill','Hype','Late Night','Heartbreak','Focus','Film Score','Soulful'];
 const GENRES = ['R&B','Soul','Hip-Hop','Afrobeats','Neo-Soul','Gospel','Jazz','Pop'];
 const PODCAST_SHOWS = [
+          { label:'Expertise Market',  sub:'Hire & collaborate',   route:'marketplace',  icon:'🧩' },
   { id:1, title:'The Creator Blueprint', host:'Marcus Allen', episodes:24, description:'Conversations on music ownership, distribution, and independent artist success.' },
   { id:2, title:'Frequency Sessions',    host:'Maya Quinn',   episodes:18, description:'Deep dive producer sessions — from first loop to final master.' },
 ];
@@ -60,9 +61,9 @@ const TXS = [
 /* ── BASE STYLES ───────────────────────── */
 const B = {
   screen:{ minHeight:'100vh', background:C.bg, color:C.text, display:'flex', flexDirection:'column', animation:'rise .18s ease' },
-  scroll:{ flex:1, overflowY:'auto', paddingBottom:'88px' },
+  scroll:{ flex:1, overflowY:'auto', paddingBottom:'150px' },
   card:{ background:C.card, border:`1px solid ${C.line}`, borderRadius:14 },
-  goldCard:{ background:`linear-gradient(135deg,${C.goldBg},${C.card2} 60%,#101010)`, border:`1px solid ${C.goldDim}`, borderRadius:14 },
+  goldCard:{ background:`linear-gradient(135deg,${C.goldBg},${C.card2} 65%,#0F0D0A)`, border:`1px solid ${C.goldDim}`, borderRadius:14 },
   title:{ fontSize:16, fontWeight:800, marginBottom:10 },
   goldBtn:{ background:C.gold, color:C.bg, border:'none', borderRadius:24, padding:'12px 18px', fontWeight:800, cursor:'pointer', fontSize:14 },
   outlineBtn:{ background:'transparent', color:C.gold, border:`1px solid ${C.goldDim}`, borderRadius:24, padding:'10px 14px', fontWeight:700, cursor:'pointer', fontSize:13 },
@@ -127,6 +128,72 @@ const BottomNav = ({ screen, setScreen, role }) => {
   );
 };
 
+const PersistentPlayer = ({ track, playing, setPlaying, setScreen, panel, setPanel }) => {
+  if (!track) return null;
+  return (
+    <>
+      <div style={{ position:'fixed', bottom:58, width:390, background:'linear-gradient(180deg,#18130F,#120F0C)', borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, zIndex:25, padding:'8px 10px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div onClick={() => setScreen('player')} style={{ width:36, height:36, borderRadius:8, background:`linear-gradient(135deg,${C.goldDim},#111)`, display:'grid', placeItems:'center', color:C.gold, cursor:'pointer' }}>▶</div>
+          <div onClick={() => setScreen('player')} style={{ flex:1, minWidth:0, cursor:'pointer' }}>
+            <div style={{ fontSize:12, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{track.title}</div>
+            <div style={{ color:C.muted, fontSize:10, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{track.artist}</div>
+          </div>
+          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+            <button onClick={() => setPanel('queue')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:15 }}>☰</button>
+            <button onClick={() => setPlaying(!playing)} style={{ background:'transparent', border:'none', color:C.gold, cursor:'pointer', fontSize:18 }}>{playing ? '⏸' : '▶'}</button>
+            <button onClick={() => setPanel('lyrics')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:15 }}>♫</button>
+          </div>
+        </div>
+        <div style={{ marginTop:6, height:2, borderRadius:3, background:C.line }}><div style={{ width:'38%', height:'100%', background:C.gold }}></div></div>
+      </div>
+
+      {panel && (
+        <div style={{ position:'fixed', inset:0, background:'#000000A8', zIndex:40, display:'flex', alignItems:'flex-end' }} onClick={() => setPanel(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ width:'100%', background:C.card2, borderTopLeftRadius:20, borderTopRightRadius:20, borderTop:`1px solid ${C.line}`, padding:'14px 16px 20px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
+              <div style={{ fontWeight:800 }}>{panel === 'queue' ? 'Queue' : panel === 'lyrics' ? 'Lyrics' : 'Sleep Timer'}</div>
+              <button onClick={() => setPanel(null)} style={{ ...B.ghostBtn, padding:'4px 10px', fontSize:11 }}>Close</button>
+            </div>
+
+            {panel === 'queue' && TRACKS.map((item, idx) => (
+              <div key={item.id} style={{ ...B.card, padding:10, marginBottom:7, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <div style={{ display:'flex', gap:9, alignItems:'center' }}>
+                  <span style={{ width:14, fontSize:11, color:C.muted }}>{idx + 1}</span>
+                  <div>
+                    <div style={{ fontSize:12, fontWeight:700 }}>{item.title}</div>
+                    <div style={{ color:C.muted, fontSize:10 }}>{item.artist}</div>
+                  </div>
+                </div>
+                <span style={{ color:C.muted, fontSize:10 }}>{item.duration}</span>
+              </div>
+            ))}
+
+            {panel === 'lyrics' && (
+              <div style={{ ...B.card, padding:12, lineHeight:1.8, color:C.muted, fontSize:12 }}>
+                <div>Midnight lights and amber skies,</div>
+                <div>City echoes, slow replies,</div>
+                <div style={{ color:C.gold }}>Hold the moment, keep it near,</div>
+                <div>Every heartbeat crystal clear.</div>
+              </div>
+            )}
+
+            {panel === 'sleep' && (
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+                {['15 min','30 min','45 min','60 min','End of song','Off'].map(opt => (
+                  <button key={opt} style={{ ...B.ghostBtn, padding:'10px 8px', fontSize:11 }}>{opt}</button>
+                ))}
+              </div>
+            )}
+
+            <button onClick={() => setPanel('sleep')} style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Sleep Timer</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 /* ══════════════════════════════════════════════════
    AUTH FLOW: Login/Signup → Role Selection
 ══════════════════════════════════════════════════ */
@@ -136,7 +203,7 @@ const AuthScreen = ({ onDone }) => {
   const [role, setRole] = React.useState(null);
 
   if (step === 'role') return (
-    <div style={{ ...B.screen, background:'radial-gradient(circle at 30% 20%,#1A1404 0%,#0A0A0A 50%)' }}>
+    <div style={{ ...B.screen, background:'linear-gradient(180deg,#14110D 0%,#0D0B08 55%)' }}>
       <StatusBar />
       <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'18px 22px 32px' }}>
         <div style={{ textAlign:'center', marginTop:24, marginBottom:32 }}>
@@ -170,7 +237,7 @@ const AuthScreen = ({ onDone }) => {
   );
 
   return (
-    <div style={{ ...B.screen, background:'radial-gradient(circle at 50% 10%,#1A1404 0%,#0A0A0A 50%)' }}>
+    <div style={{ ...B.screen, background:'linear-gradient(180deg,#17120D 0%,#0D0B08 55%)' }}>
       <StatusBar />
       <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'14px 22px 28px' }}>
         <div style={{ textAlign:'center', marginTop:20, marginBottom:20 }}>
@@ -714,6 +781,11 @@ const CommunityScreen = ({ setScreen, role }) => (
         ))}
         <button onClick={() => setScreen('networking')} style={{ ...B.outlineBtn, width:'100%', marginTop:6 }}>Full Directory</button>
       </div>
+      <div style={{ ...B.card, padding:14, marginBottom:12 }}>
+        <div style={{ fontWeight:800, fontSize:15, marginBottom:4 }}>🧩 Expertise Marketplace</div>
+        <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>Producer Connect, A&R Hub, Collaboration Hub, OWLN Live, and Fan Clubs.</div>
+        <button onClick={() => setScreen('marketplace')} style={{ ...B.outlineBtn, width:'100%' }}>Open Marketplace</button>
+      </div>
       {role === 'artist' && (
         <div style={{ ...B.card, padding:12 }}>
           <div style={{ fontWeight:700, marginBottom:6 }}>Creator Collaboration Board</div>
@@ -751,7 +823,7 @@ const ArtistScreen = ({ setScreen, setTrack }) => (
         </div>
       </div>
       <div style={{ display:'flex', gap:8, marginBottom:14 }}>
-        <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, flex:1, animation:'glow 2s ease infinite' }}>$9.99/mo Subscribe</button>
+        <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, flex:1, animation:'glow 2s ease infinite' }}>From $1/mo</button>
         <button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Dashboard</button>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:14 }}>
@@ -805,7 +877,7 @@ const FanProfileScreen = ({ setScreen }) => (
       </div>
       <div style={{ ...B.card, padding:12, marginBottom:12 }}>
         <div style={{ fontWeight:700, marginBottom:8 }}>Active Subscriptions</div>
-        {['Marcus Allen — Pro $9.99/mo','Maya Quinn — Pro $9.99/mo'].map(s => (
+        {['Marcus Allen — Insider $3.99/mo','Maya Quinn — Superfan $5.99/mo'].map(s => (
           <div key={s} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:`1px solid ${C.line}`, fontSize:12 }}>
             <span>{s}</span><span style={{ color:C.success }}>Active</span>
           </div>
@@ -827,54 +899,51 @@ const FanProfileScreen = ({ setScreen }) => (
 ══════════════════════════════════════════════════ */
 const SubscribeScreen = ({ setScreen, role }) => (
   <div style={B.screen}>
-    <Header title="Fan Membership" subtitle="Support Marcus Allen directly" onBack={() => setScreen(role === 'artist' ? 'artist' : 'home')} />
+    <Header title="Creator Subscriptions" subtitle="Pick a support tier" onBack={() => setScreen(role === 'artist' ? 'artist' : 'home')} />
     <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
-      <div style={{ textAlign:'center', padding:'0 8px 16px', color:C.muted, fontSize:13 }}>
-        <span style={{ color:C.gold, fontWeight:700 }}>80%</span> of every subscription goes directly to the artist.
+      <div style={{ textAlign:'center', padding:'0 8px 14px', color:C.muted, fontSize:13 }}>
+        Lower, accessible pricing designed to grow recurring fan support.
       </div>
-      <div style={{ ...B.card, padding:16, marginBottom:10 }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
-          <div style={{ fontWeight:800, fontSize:16 }}>Free Fan</div>
-          <div style={{ fontSize:22, fontWeight:900 }}>$0</div>
-        </div>
-        <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>Start supporting your favorite creators for free</div>
-        <div style={{ display:'grid', gap:5 }}>
-          {['Stream all public tracks','Follow artist & get release alerts','Access free podcast episodes','Participate in Fanfare Forum','Browse creator merch'].map(f => (
-            <div key={f} style={{ display:'flex', gap:8, alignItems:'center', fontSize:12 }}>
-              <span style={{ color:C.success }}>✓</span><span>{f}</span>
-            </div>
-          ))}
-          {['Exclusive unreleased content','Direct messages with artist','Behind-the-scenes videos','Early access to tickets & merch drops','Name in credits'].map(f => (
-            <div key={f} style={{ display:'flex', gap:8, alignItems:'center', fontSize:12 }}>
-              <span style={{ color:C.line }}>○</span><span style={{ color:C.muted }}>{f}</span>
-            </div>
-          ))}
-        </div>
-        <button style={{ ...B.ghostBtn, width:'100%', marginTop:12 }}>Current Plan</button>
-      </div>
-      <div style={{ ...B.card, padding:16, marginBottom:10, border:`1px solid ${C.gold}`, background:C.goldBg }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:2 }}>
+
+      <div style={{ ...B.card, padding:14, marginBottom:10 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
-            <div style={{ color:C.gold, fontSize:10, fontWeight:800, letterSpacing:1 }}>PRO FAN</div>
-            <div style={{ fontWeight:800, fontSize:16 }}>Superfan</div>
+            <div style={{ fontWeight:800, fontSize:16 }}>Tier 1 — Supporter</div>
+            <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>Entry support tier</div>
           </div>
-          <div style={{ textAlign:'right' }}>
-            <div style={{ color:C.gold, fontSize:24, fontWeight:900 }}>$9.99</div>
-            <div style={{ color:C.muted, fontSize:11 }}>per month</div>
-          </div>
+          <div style={{ color:C.gold, fontSize:24, fontWeight:900 }}>$1.00</div>
         </div>
-        <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>Everything in Free, plus exclusive access:</div>
-        <div style={{ display:'grid', gap:5 }}>
-          {['Exclusive unreleased content','Direct messages with artist','Behind-the-scenes videos','Early access to tickets & merch drops','Name in credits','Ad-free listening','Download for offline play'].map(f => (
-            <div key={f} style={{ display:'flex', gap:8, alignItems:'center', fontSize:12 }}>
-              <span style={{ color:C.gold }}>★</span><span>{f}</span>
-            </div>
-          ))}
-        </div>
-        <button style={{ ...B.goldBtn, width:'100%', marginTop:14, animation:'glow 2s ease infinite' }}>Subscribe Now — $9.99/mo</button>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits (to be finalized): badge, priority comments, supporter-only posts.</div>
+        <button style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Choose Supporter</button>
       </div>
+
+      <div style={{ ...B.card, padding:14, marginBottom:10 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div>
+            <div style={{ fontWeight:800, fontSize:16 }}>Tier 2 — Insider</div>
+            <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>Mid-level fan access</div>
+          </div>
+          <div style={{ color:C.gold, fontSize:24, fontWeight:900 }}>$3.99</div>
+        </div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits: early content previews, bonus drops, fan club threads.</div>
+        <button style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Choose Insider</button>
+      </div>
+
+      <div style={{ ...B.card, padding:14, border:`1px solid ${C.goldDim}`, background:C.goldBg, marginBottom:10 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div>
+            <div style={{ color:C.gold, fontSize:10, fontWeight:800, letterSpacing:1 }}>MOST SUPPORT</div>
+            <div style={{ fontWeight:800, fontSize:16 }}>Tier 3 — Superfan</div>
+            <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>Top fan tier</div>
+          </div>
+          <div style={{ color:C.gold, fontSize:26, fontWeight:900 }}>$5.99</div>
+        </div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits: premium fan club access, priority live chat, exclusive drops.</div>
+        <button style={{ ...B.goldBtn, width:'100%', marginTop:12, animation:'glow 2s ease infinite' }}>Choose Superfan</button>
+      </div>
+
       <div style={{ ...B.card, padding:12, textAlign:'center' }}>
-        <div style={{ color:C.muted, fontSize:11 }}>Cancel anytime · Billed monthly · Stripe secured</div>
+        <div style={{ color:C.muted, fontSize:11 }}>Exact benefits will be finalized with your client. Cancel anytime.</div>
       </div>
     </div>
   </div>
@@ -941,44 +1010,83 @@ const OpiScreen = ({ setScreen }) => (
 /* ══════════════════════════════════════════════════
    WALLET
 ══════════════════════════════════════════════════ */
-const WalletScreen = ({ setScreen }) => (
-  <div style={B.screen}>
-    <Header title="My Wallet" subtitle="Earnings, tracked and ready" onBack={() => setScreen('artist')} />
-    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
-      <div style={{ ...B.goldCard, padding:16, marginBottom:14, textAlign:'center' }}>
-        <div style={{ color:C.muted, fontSize:11, letterSpacing:1 }}>TOTAL EARNED</div>
-        <div style={{ color:C.gold, fontSize:44, fontWeight:900, marginTop:4 }}>$3,240</div>
-        <div style={{ display:'flex', gap:10, marginTop:10 }}>
-          <button style={{ ...B.goldBtn, flex:1, animation:'glow 2s ease infinite' }}>Withdraw Funds</button>
-          <button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Full Report</button>
-        </div>
+const WalletScreen = ({ setScreen }) => {
+  const [tab, setTab] = React.useState('fiat');
+  return (
+    <div style={B.screen}>
+      <Header title="My Wallet" subtitle="Fiat + Crypto balances" onBack={() => setScreen('artist')} />
+      <div style={{ padding:'0 16px 12px', display:'flex', gap:8 }}>
+        <Tag label="Fiat Wallet" active={tab==='fiat'} onClick={() => setTab('fiat')} />
+        <Tag label="Crypto Wallet" active={tab==='crypto'} onClick={() => setTab('crypto')} />
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
-        {[['$1,840','Pending','#D4AF37'],['$1,400','Paid Out','#59B17A']].map(([v,l,color]) => (
-          <div key={l} style={{ ...B.card, padding:12 }}>
-            <div style={{ color:C.muted, fontSize:11 }}>{l}</div>
-            <div style={{ fontSize:24, fontWeight:900, color, marginTop:2 }}>{v}</div>
-          </div>
-        ))}
-      </div>
-      <div style={{ fontWeight:700, marginBottom:8, fontSize:15 }}>Transaction History</div>
-      {TXS.map(tx => (
-        <div key={tx.id} style={{ ...B.card, padding:12, marginBottom:7, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <div>
-            <div style={{ fontSize:13, fontWeight:700 }}>{tx.title}</div>
-            <div style={{ color:C.muted, fontSize:11 }}>{tx.date} · {tx.source}</div>
-          </div>
-          <div style={{ color: tx.type==='in' ? C.success : C.danger, fontWeight:800 }}>{tx.amount}</div>
-        </div>
-      ))}
-      <div style={{ ...B.card, padding:12, marginTop:6 }}>
-        <div style={{ fontWeight:700, marginBottom:4 }}>Payout Settings</div>
-        <div style={{ color:C.muted, fontSize:12, marginBottom:8 }}>Payouts via Stripe Connect · 3–5 business days</div>
-        <button style={{ ...B.ghostBtn, width:'100%' }}>Manage Payout Method</button>
+      <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+        {tab === 'fiat' && (
+          <>
+            <div style={{ ...B.goldCard, padding:16, marginBottom:14, textAlign:'center' }}>
+              <div style={{ color:C.muted, fontSize:11, letterSpacing:1 }}>TOTAL EARNED</div>
+              <div style={{ color:C.gold, fontSize:44, fontWeight:900, marginTop:4 }}>$3,240</div>
+              <div style={{ display:'flex', gap:10, marginTop:10 }}>
+                <button style={{ ...B.goldBtn, flex:1 }}>Withdraw Funds</button>
+                <button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Full Report</button>
+              </div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
+              {[['$1,840','Pending','#C8952A'],['$1,400','Paid Out','#59B17A']].map(([v,l,color]) => (
+                <div key={l} style={{ ...B.card, padding:12 }}>
+                  <div style={{ color:C.muted, fontSize:11 }}>{l}</div>
+                  <div style={{ fontSize:24, fontWeight:900, color, marginTop:2 }}>{v}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontWeight:700, marginBottom:8, fontSize:15 }}>Transaction History</div>
+            {TXS.map(tx => (
+              <div key={tx.id} style={{ ...B.card, padding:12, marginBottom:7, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                <div>
+                  <div style={{ fontSize:13, fontWeight:700 }}>{tx.title}</div>
+                  <div style={{ color:C.muted, fontSize:11 }}>{tx.date} · {tx.source}</div>
+                </div>
+                <div style={{ color: tx.type==='in' ? C.success : C.danger, fontWeight:800 }}>{tx.amount}</div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {tab === 'crypto' && (
+          <>
+            <div style={{ ...B.card, padding:14, marginBottom:10 }}>
+              <div style={{ display:'flex', justifyContent:'space-between' }}>
+                <div>
+                  <div style={{ fontSize:13, fontWeight:700 }}>USDC</div>
+                  <div style={{ color:C.muted, fontSize:11 }}>Stablecoin Balance</div>
+                </div>
+                <div style={{ color:C.gold, fontWeight:900 }}>1,128.45 USDC</div>
+              </div>
+            </div>
+            <div style={{ ...B.card, padding:14, marginBottom:10 }}>
+              <div style={{ display:'flex', justifyContent:'space-between' }}>
+                <div>
+                  <div style={{ fontSize:13, fontWeight:700 }}>ETH</div>
+                  <div style={{ color:C.muted, fontSize:11 }}>Ethereum Balance</div>
+                </div>
+                <div style={{ color:C.gold, fontWeight:900 }}>0.287 ETH</div>
+              </div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+              <button style={B.ghostBtn}>Deposit</button>
+              <button style={B.ghostBtn}>Send</button>
+              <button style={B.ghostBtn}>Withdraw</button>
+            </div>
+            <div style={{ ...B.card, padding:12, marginTop:10 }}>
+              <div style={{ fontWeight:700, marginBottom:6 }}>Connected Wallet</div>
+              <div style={{ color:C.muted, fontSize:11, marginBottom:8 }}>0x7B2C...91fA (EVM)</div>
+              <button style={{ ...B.outlineBtn, width:'100%' }}>Manage Wallet Connection</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 /* ══════════════════════════════════════════════════
    UPLOAD
@@ -1133,6 +1241,7 @@ const FeaturesScreen = ({ setScreen }) => (
         { title:'Music Streaming',        detail:'Adaptive playback, background play, offline mode for subscribers',       route:'streamingops', icon:'🎵' },
         { title:'Artist Profiles',        detail:'Public creator page — music, bio, stats, merch, subscription',           route:'artist',       icon:'🎤' },
         { title:'Upload & Release Tools', detail:'WAV/MP3 upload, schedule releases, set pricing, track performance',      route:'upload',       icon:'⇪' },
+        { title:'Expertise Marketplace',  detail:'Producer Connect, A&R Hub, Collaboration Hub, OWLN Live, Fan Clubs',    route:'marketplace',  icon:'🧩' },
         { title:'Podcasts & Film',        detail:'Show → Season → Episode hierarchy, free & paid episodes',               route:'podcast',      icon:'🎙' },
         { title:'Fan Subscriptions',      detail:'Free + Pro tiers. Direct artist support. 80% to artist, always.',       route:'subscribe',    icon:'⭐' },
         { title:'Merch Store',            detail:'Print-on-demand integrated store, no inventory required',                route:'merch',        icon:'🛍' },
@@ -1181,6 +1290,118 @@ const FanfareScreen = ({ setScreen }) => {
     </div>
   );
 };
+
+const MarketplaceScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="Expertise Marketplace" subtitle="Hire talent, collab, go live, and build fan clubs" onBack={() => setScreen('community')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      {[
+        ['Producer Connect','Find producers by genre, rates, and availability.','producerconnect'],
+        ['A&R Hub','Submit your profile and releases to active A&R professionals.','arhub'],
+        ['Collaboration Hub','Post opportunities and match with creators globally.','collabhub'],
+        ['OWNLN Live','Host live sessions with fan chat and ticketed access.','ownlnlive'],
+        ['Fan Clubs','Create tiered fan spaces with exclusive drops and discussions.','fanclubs'],
+      ].map(([title, detail, route]) => (
+        <div key={title} style={{ ...B.card, padding:12, marginBottom:8 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', gap:8, alignItems:'center' }}>
+            <div>
+              <div style={{ fontWeight:700, fontSize:13 }}>{title}</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{detail}</div>
+            </div>
+            <button onClick={() => setScreen(route)} style={{ ...B.outlineBtn, padding:'6px 10px', fontSize:11 }}>Open</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const ProducerConnectScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="Producer Connect" subtitle="Browse producers and book sessions" onBack={() => setScreen('marketplace')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      {[
+        ['Ari Vega','Hip-Hop / Soul','From $75/hr'],
+        ['Luca Prime','R&B / Afrobeats','From $60/hr'],
+        ['Nova Stack','Pop / Alt','From $90/hr'],
+      ].map(([name, spec, rate]) => (
+        <div key={name} style={{ ...B.card, padding:12, marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div>
+            <div style={{ fontWeight:700 }}>{name}</div>
+            <div style={{ color:C.muted, fontSize:11 }}>{spec}</div>
+          </div>
+          <button style={{ ...B.ghostBtn, fontSize:11 }}>{rate}</button>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const ArHubScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="A&R Hub" subtitle="Discoverability for serious releases" onBack={() => setScreen('marketplace')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      <div style={{ ...B.card, padding:12, marginBottom:10 }}>
+        <div style={{ fontWeight:700, marginBottom:4 }}>Active A&R Programs</div>
+        <div style={{ color:C.muted, fontSize:12 }}>Apply your artist profile and latest release for review cycles.</div>
+      </div>
+      {['Urban Breakthrough 2026','Global Indie Spotlight','Sync Placement Intake'].map(item => (
+        <div key={item} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+          <span>{item}</span><span style={{ color:C.gold }}>Apply</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const CollabHubScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="Collaboration Hub" subtitle="Find collaborators by role and genre" onBack={() => setScreen('marketplace')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      {['Need mix engineer for soul EP','Looking for female hook writer','Afrobeats co-producer wanted'].map(post => (
+        <div key={post} style={{ ...B.card, padding:12, marginBottom:8 }}>
+          <div style={{ fontWeight:700, fontSize:13 }}>{post}</div>
+          <div style={{ color:C.muted, fontSize:11, marginTop:3 }}>Remote · Paid · 2 week turnaround</div>
+        </div>
+      ))}
+      <button style={{ ...B.outlineBtn, width:'100%' }}>+ Post Collaboration Request</button>
+    </div>
+  </div>
+);
+
+const OwnlnLiveScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="OWNLN Live" subtitle="Go live with fans" onBack={() => setScreen('marketplace')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      <div style={{ ...B.goldCard, padding:13, marginBottom:10 }}>
+        <div style={{ fontWeight:800, marginBottom:4 }}>Schedule Live Session</div>
+        <div style={{ color:C.muted, fontSize:12 }}>Set date, ticket type, and fan chat access.</div>
+      </div>
+      {['Acoustic Night (Free)','Producer Breakdown (Ticketed)','Q&A + Listening Session (Subscriber only)'].map(item => (
+        <div key={item} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+          <span>{item}</span><span style={{ color:C.gold }}>Setup</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const FanClubsScreen = ({ setScreen }) => (
+  <div style={B.screen}>
+    <Header title="Fan Clubs" subtitle="Private spaces for your biggest supporters" onBack={() => setScreen('marketplace')} />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      <div style={{ ...B.card, padding:12, marginBottom:10 }}>
+        <div style={{ fontWeight:700, marginBottom:4 }}>Club Levels</div>
+        <div style={{ color:C.muted, fontSize:12 }}>Open, Insider, and Superfan rooms with exclusive drops and direct interaction.</div>
+      </div>
+      {['Open Fan Club','Insider Circle','Superfan Vault'].map(name => (
+        <div key={name} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+          <span>{name}</span><span style={{ color:C.gold }}>Manage</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 const NetworkingScreen = ({ setScreen }) => {
   const people = [
@@ -1231,54 +1452,122 @@ const NotificationsScreen = ({ setScreen, role }) => (
 
 const AdminScreen = ({ setScreen }) => (
   <div style={B.screen}>
-    <Header title="Platform Admin" subtitle="Management & moderation tools" onBack={() => setScreen('community')} />
+    <Header title="Platform Admin" subtitle="Moderation, users, subscriptions, analytics" onBack={() => setScreen('community')} />
     <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
-      {[
-        ['User management','Manage accounts, roles & permissions'],
-        ['Content moderation','Review flagged posts, tracks & comments'],
-        ['Featured placements','Set featured artists & trending editorial'],
-        ['Subscription management','Review plans, disputes & billing'],
-        ['Copyright protection','Handle content flag requests'],
-        ['Analytics overview','Platform-wide streaming & revenue data'],
-      ].map(([t,d]) => (
-        <div key={t} style={{ ...B.card, padding:12, marginBottom:8 }}>
-          <div style={{ fontWeight:700, fontSize:13 }}>{t}</div>
-          <div style={{ color:C.muted, fontSize:11, marginTop:3 }}>{d}</div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:10 }}>
+        {[['1,842','Active Users'],['37','Open Flags'],['426','Pro Subs'],['99.8%','System Health']].map(([v,l]) => (
+          <div key={l} style={{ ...B.card, padding:10 }}>
+            <div style={{ color:C.gold, fontWeight:900, fontSize:18 }}>{v}</div>
+            <div style={{ color:C.muted, fontSize:11 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...B.card, padding:12, marginBottom:8 }}>
+        <div style={{ fontWeight:700, marginBottom:8 }}>Moderation Queue</div>
+        {['Flagged post in Fanfare','Copyright dispute on upload #884','Abuse report on direct message'].map(item => (
+          <div key={item} style={{ display:'flex', justifyContent:'space-between', padding:'7px 0', borderBottom:`1px solid ${C.line}`, fontSize:12 }}>
+            <span>{item}</span><span style={{ color:C.gold }}>Review</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ ...B.card, padding:12, marginBottom:8 }}>
+        <div style={{ fontWeight:700, marginBottom:8 }}>User Management</div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+          <button style={B.ghostBtn}>Suspend</button>
+          <button style={B.ghostBtn}>Verify</button>
+          <button style={B.ghostBtn}>Promote</button>
         </div>
-      ))}
+      </div>
+      <div style={{ ...B.card, padding:12 }}>
+        <div style={{ fontWeight:700, marginBottom:8 }}>Admin Controls</div>
+        {['Featured placements','Subscription disputes','Payout holds','Global announcements'].map(item => (
+          <div key={item} style={{ ...B.card, padding:10, marginBottom:6, fontSize:12 }}>{item}</div>
+        ))}
+      </div>
     </div>
   </div>
 );
 
-const SettingsScreen = ({ setScreen, onLogout, role }) => (
-  <div style={B.screen}>
-    <Header title="Settings" subtitle="Account · Billing · Preferences" onBack={() => setScreen(role==='artist' ? 'artist' : 'fanprofile')} />
-    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
-      <div style={{ ...B.card, padding:2, marginBottom:14, overflow:'hidden' }}>
-        {[
-          ['Profile & account',       role==='artist' ? 'Creator profile, bio, genres, links' : 'Fan profile & display name'],
-          ['Notification preferences','Push, email, release alerts'],
-          ['Billing & subscription',  role==='artist' ? 'Payout settings & plan details' : 'Active subscriptions & billing'],
-          ['Privacy & security',      'Password, 2FA, data controls'],
-          ['Listening preferences',   'Audio quality, autoplay, sleep timer'],
-        ].map(([title, sub], i, arr) => (
-          <div key={title} style={{ padding:'13px 14px', borderBottom: i < arr.length-1 ? `1px solid ${C.line}` : 'none', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer' }}>
-            <div>
-              <div style={{ fontSize:13, fontWeight:600 }}>{title}</div>
-              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{sub}</div>
+const SettingsScreen = ({ setScreen, onLogout, role }) => {
+  const [section, setSection] = React.useState('home');
+  const backTo = role==='artist' ? 'artist' : 'fanprofile';
+  const sections = [
+    ['profile','Profile & account'],
+    ['notifications','Notification preferences'],
+    ['billing','Billing & subscription'],
+    ['privacy','Privacy & security'],
+    ['listening','Listening preferences'],
+  ];
+
+  if (section !== 'home') {
+    return (
+      <div style={B.screen}>
+        <Header title={sections.find(([id]) => id === section)?.[1] || 'Settings'} subtitle="Detailed settings" onBack={() => setSection('home')} />
+        <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+          {section === 'profile' && (
+            <div style={{ ...B.card, padding:12 }}>
+              <input style={{ ...B.input, marginBottom:8 }} placeholder="Display name" defaultValue={role==='artist' ? 'Marcus Allen' : 'Jamie D'} />
+              <input style={{ ...B.input, marginBottom:8 }} placeholder="Bio" defaultValue={role==='artist' ? 'Independent creator' : 'Music lover'} />
+              <button style={{ ...B.goldBtn, width:'100%' }}>Save Profile</button>
             </div>
-            <span style={{ color:C.muted }}>›</span>
-          </div>
-        ))}
+          )}
+          {section === 'notifications' && ['Push notifications','Email alerts','Release notifications','Community mentions'].map(item => (
+            <div key={item} style={{ ...B.card, padding:12, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+              <span>{item}</span><span style={{ color:C.gold }}>ON</span>
+            </div>
+          ))}
+          {section === 'billing' && (
+            <div style={{ ...B.card, padding:12 }}>
+              <div style={{ fontWeight:700, marginBottom:6 }}>{role==='artist' ? 'Payout & Plan' : 'Subscriptions & Payment Methods'}</div>
+              <div style={{ color:C.muted, fontSize:12, marginBottom:8 }}>Manage cards, invoices, and active plans.</div>
+              <button style={{ ...B.outlineBtn, width:'100%' }}>Manage Billing</button>
+            </div>
+          )}
+          {section === 'privacy' && ['Change password','Two-factor authentication','Data export','Blocked users'].map(item => (
+            <div key={item} style={{ ...B.card, padding:12, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+              <span>{item}</span><span style={{ color:C.muted }}>›</span>
+            </div>
+          ))}
+          {section === 'listening' && ['Audio quality: High','Autoplay: On','Crossfade: Off','Sleep timer default: Off'].map(item => (
+            <div key={item} style={{ ...B.card, padding:12, marginBottom:7, display:'flex', justifyContent:'space-between' }}>
+              <span>{item}</span><span style={{ color:C.muted }}>Edit</span>
+            </div>
+          ))}
+        </div>
       </div>
-      <div style={{ ...B.card, padding:14, border:'1px solid #5A2A2A' }}>
-        <div style={{ fontWeight:700, marginBottom:4 }}>Sign Out</div>
-        <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>Exit this session and return to the login screen.</div>
-        <button onClick={onLogout} style={{ width:'100%', border:'1px solid #8A3D3D', background:'transparent', color:C.danger, borderRadius:24, padding:'11px', fontWeight:800, cursor:'pointer', fontSize:13 }}>Sign Out</button>
+    );
+  }
+
+  return (
+    <div style={B.screen}>
+      <Header title="Settings" subtitle="Account · Billing · Preferences" onBack={() => setScreen(backTo)} />
+      <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+        <div style={{ ...B.card, padding:2, marginBottom:14, overflow:'hidden' }}>
+          {[
+            ['profile','Profile & account', role==='artist' ? 'Creator profile, bio, genres, links' : 'Fan profile & display name'],
+            ['notifications','Notification preferences','Push, email, release alerts'],
+            ['billing','Billing & subscription', role==='artist' ? 'Payout settings & plan details' : 'Active subscriptions & billing'],
+            ['privacy','Privacy & security','Password, 2FA, data controls'],
+            ['listening','Listening preferences','Audio quality, autoplay, sleep timer'],
+          ].map(([id, title, sub], i, arr) => (
+            <div key={title} onClick={() => setSection(id)} style={{ padding:'13px 14px', borderBottom: i < arr.length-1 ? `1px solid ${C.line}` : 'none', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer' }}>
+              <div>
+                <div style={{ fontSize:13, fontWeight:600 }}>{title}</div>
+                <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{sub}</div>
+              </div>
+              <span style={{ color:C.muted }}>›</span>
+            </div>
+          ))}
+        </div>
+        <div style={{ ...B.card, padding:14, border:'1px solid #5A2A2A' }}>
+          <div style={{ fontWeight:700, marginBottom:4 }}>Sign Out</div>
+          <div style={{ color:C.muted, fontSize:12, marginBottom:10 }}>Exit this session and return to the login screen.</div>
+          <button onClick={onLogout} style={{ width:'100%', border:'1px solid #8A3D3D', background:'transparent', color:C.danger, borderRadius:24, padding:'11px', fontWeight:800, cursor:'pointer', fontSize:13 }}>Sign Out</button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const FanSavedScreen = ({ setScreen, setTrack }) => (
   <div style={B.screen}>
@@ -1316,6 +1605,8 @@ const App = () => {
   const [role, setRole] = React.useState(null);
   const [screen, setScreen] = React.useState('home');
   const [track, setTrack] = React.useState(TRACKS[0]);
+  const [playing, setPlaying] = React.useState(true);
+  const [playerPanel, setPlayerPanel] = React.useState(null);
 
   const logout = () => { setAuthed(false); setRole(null); setScreen('home'); };
 
@@ -1328,6 +1619,12 @@ const App = () => {
     search:       <SearchScreen {...sp} />,
     library:      role === 'artist' ? <ArtistLibraryScreen {...sp} /> : <FanLibraryScreen {...sp} />,
     community:    <CommunityScreen {...sp} />,
+    marketplace:  <MarketplaceScreen setScreen={setScreen} />,
+    producerconnect:<ProducerConnectScreen setScreen={setScreen} />,
+    arhub:        <ArHubScreen setScreen={setScreen} />,
+    collabhub:    <CollabHubScreen setScreen={setScreen} />,
+    ownlnlive:    <OwnlnLiveScreen setScreen={setScreen} />,
+    fanclubs:     <FanClubsScreen setScreen={setScreen} />,
     artist:       <ArtistScreen setScreen={setScreen} setTrack={setTrack} />,
     fanprofile:   <FanProfileScreen setScreen={setScreen} />,
     artistpublic: <ArtistPublicScreen setScreen={setScreen} setTrack={setTrack} />,
@@ -1350,7 +1647,24 @@ const App = () => {
     fansaved:     <FanSavedScreen setScreen={setScreen} setTrack={setTrack} />,
   };
 
-  return routes[screen] || routes.home;
+  const view = routes[screen] || routes.home;
+  const showMiniPlayer = !['player'].includes(screen);
+
+  return (
+    <>
+      {view}
+      {showMiniPlayer && (
+        <PersistentPlayer
+          track={track}
+          playing={playing}
+          setPlaying={setPlaying}
+          setScreen={setScreen}
+          panel={playerPanel}
+          setPanel={setPlayerPanel}
+        />
+      )}
+    </>
+  );
 };
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
