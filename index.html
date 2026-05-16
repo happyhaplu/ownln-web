@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OWNLN App Prototype</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100vh; background: #050505; display: flex; justify-content: center; align-items: flex-start; font-family: system-ui, -apple-system, sans-serif; }
+    #root { width: 390px; min-height: 100vh; background: #0A0A0A; color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid #171717; border-right: 1px solid #171717; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    @keyframes glow { 0%,100% { box-shadow: 0 0 10px #D4AF3755; } 50% { box-shadow: 0 0 24px #D4AF3790; } }
+    @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const C = { bg:'#0A0A0A', card:'#1A1A1A', gold:'#D4AF37', goldBorder:'#D4AF3760', text:'#FFF', muted:'#888', line:'#2A2A2A', success:'#59B17A', danger:'#D26A6A' };
+const TRACKS = [
+  { id:1, title:'Midnight Gold', plays:'2.4M', duration:'3:47', artist:'Marcus Allen' },
+  { id:2, title:'Echoes', plays:'1.8M', duration:'4:12', artist:'Marcus Allen' },
+  { id:3, title:'Sovereign', plays:'1.2M', duration:'3:58', artist:'Marcus Allen' },
+  { id:4, title:'Undivided', plays:'980K', duration:'4:33', artist:'Marcus Allen' },
+];
+const TXS = [
+  { title:'Fan subscription', amount:'+$49.95', date:'May 14', type:'in' },
+  { title:'Track purchase', amount:'+$12.00', date:'May 13', type:'in' },
+  { title:'Stream royalties', amount:'+$284.00', date:'May 10', type:'in' },
+  { title:'Payout sent', amount:'-$500.00', date:'May 1', type:'out' },
+];
+
+const B = {
+  screen:{ minHeight:'100vh', background:C.bg, color:C.text, display:'flex', flexDirection:'column', animation:'rise .2s ease' },
+  top:{ padding:'50px 16px 14px' },
+  scroll:{ flex:1, overflowY:'auto', paddingBottom:'84px' },
+  card:{ background:C.card, border:`1px solid ${C.line}`, borderRadius:12 },
+  title:{ fontSize:17, fontWeight:800, marginBottom:12 },
+  goldBtn:{ background:C.gold, color:C.bg, border:'none', borderRadius:24, padding:'12px 18px', fontWeight:800, cursor:'pointer' },
+  outlineBtn:{ background:'transparent', color:C.gold, border:`1px solid ${C.gold}`, borderRadius:24, padding:'10px 14px', fontWeight:700, cursor:'pointer' },
+  input:{ width:'100%', background:'#141414', color:C.text, border:`1px solid ${C.line}`, borderRadius:12, padding:'12px 13px', outline:'none' },
+};
+
+const Header = ({ title, subtitle, onBack, right }) => (
+  <div style={{ ...B.top, display:'flex', alignItems:'center', gap:10 }}>
+    {onBack ? <button onClick={onBack} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:'#151515', color:C.text, cursor:'pointer' }}>←</button> : null}
+    <div style={{ flex:1 }}>
+      <div style={{ fontSize:20, fontWeight:900 }}>{title}</div>
+      {subtitle ? <div style={{ color:C.muted, fontSize:12 }}>{subtitle}</div> : null}
+    </div>
+    {right || null}
+  </div>
+);
+
+const BottomNav = ({ screen, setScreen }) => {
+  const tabs = [
+    { id:'home', icon:'⌂', label:'Home' },
+    { id:'search', icon:'⌕', label:'Search' },
+    { id:'library', icon:'▤', label:'Library' },
+    { id:'community', icon:'◎', label:'Community' },
+    { id:'artist', icon:'◉', label:'Profile' },
+  ];
+  return <div style={{ position:'fixed', bottom:0, width:390, background:C.card, borderTop:`1px solid ${C.line}`, padding:'8px 0 12px', display:'flex', justifyContent:'space-around', zIndex:20 }}>
+    {tabs.map(t => {
+      const active = t.id === screen;
+      return <div key={t.id} onClick={() => setScreen(t.id)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2, color:active ? C.gold : C.muted, fontSize:10, fontWeight:700, cursor:'pointer' }}>
+        <span style={{ fontSize:17 }}>{t.icon}</span><span>{t.label}</span>
+      </div>;
+    })}
+  </div>;
+};
+
+const AuthScreen = ({ mode, setMode, onDone }) => (
+  <div style={{ ...B.screen, background:'radial-gradient(circle at top,#1A1404 0%,#0A0A0A 44%)' }}>
+    <div style={{ ...B.scroll, padding:'14px 18px 18px', display:'flex', flexDirection:'column' }}>
+      <div style={{ display:'flex', justifyContent:'space-between', color:C.muted, fontSize:12, padding:'4px 2px 10px' }}>
+        <span>9:41</span>
+        <span>5G • 89%</span>
+      </div>
+      <div style={{ textAlign:'center', marginTop:18, marginBottom:16 }}>
+        <div style={{ fontSize:38, fontWeight:900, letterSpacing:0.4 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:6 }}>Where creators own their music and future</div>
+      </div>
+      <div style={{ ...B.card, borderColor:C.goldBorder, padding:8, marginBottom:12, display:'flex', gap:8 }}>
+        <button onClick={() => setMode('login')} style={{ ...B.outlineBtn, flex:1, borderColor:mode === 'login' ? C.gold : 'transparent', background:mode === 'login' ? '#2A2107' : '#121212', color:mode === 'login' ? C.gold : C.muted, padding:'11px 14px' }}>Login</button>
+        <button onClick={() => setMode('signup')} style={{ ...B.outlineBtn, flex:1, borderColor:mode === 'signup' ? C.gold : 'transparent', background:mode === 'signup' ? '#2A2107' : '#121212', color:mode === 'signup' ? C.gold : C.muted, padding:'11px 14px' }}>Sign Up</button>
+      </div>
+      <div style={{ ...B.card, padding:14 }}>
+        <div style={{ color:C.text, fontWeight:800, marginBottom:2 }}>{mode === 'login' ? 'Welcome back' : 'Join OWNLN'}</div>
+        <div style={{ color:C.muted, fontSize:11, marginBottom:11 }}>{mode === 'login' ? 'Continue your creator journey' : 'Start earning 80-90% from your music'}</div>
+        <div style={{ display:'grid', gap:10 }}>
+          <input style={B.input} placeholder="Email address" type="email" />
+          <input style={B.input} placeholder="Password" type="password" />
+          {mode === 'signup' ? <input style={B.input} placeholder="Confirm password" type="password" /> : null}
+        </div>
+        <div style={{ marginTop:10, display:'flex', justifyContent:'space-between', fontSize:11, color:C.muted }}>
+          <span>Remember me</span>
+          <span>{mode === 'login' ? 'Forgot password?' : 'Use 8+ characters'}</span>
+        </div>
+        <button onClick={onDone} style={{ ...B.goldBtn, width:'100%', marginTop:12, animation:'glow 2s ease infinite' }}>{mode === 'login' ? 'Continue' : 'Create Account'}</button>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginTop:12, color:C.muted, fontSize:10 }}><span style={{ flex:1, height:1, background:C.line }}></span><span>OR</span><span style={{ flex:1, height:1, background:C.line }}></span></div>
+        <button style={{ ...B.outlineBtn, width:'100%', marginTop:10, color:C.text, borderColor:C.line }}>Continue with Google</button>
+      </div>
+      <div style={{ marginTop:'auto', paddingTop:16, textAlign:'center', color:C.muted, fontSize:10 }}>By continuing, you agree to Terms & Privacy.</div>
+    </div>
+  </div>
+);
+
+const HomeScreen = ({ setScreen, setTrack }) => (
+  <div style={B.screen}>
+    <div style={{ ...B.top, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+      <div style={{ fontSize:28, fontWeight:900 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
+      <button onClick={() => setScreen('notifications')} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:'#151515', color:C.gold, cursor:'pointer' }}>🔔</button>
+    </div>
+    <div style={B.scroll}>
+      <div style={{ padding:'0 16px 20px' }}>
+        <div style={{ ...B.card, borderColor:C.goldBorder, background:'linear-gradient(135deg,#1D1502,#1A1A1A 60%,#101010)', padding:16 }}>
+          <div style={{ color:C.gold, fontSize:11, fontWeight:800 }}>FEATURED ARTIST</div>
+          <div style={{ fontSize:24, fontWeight:900, marginTop:2 }}>Marcus Allen</div>
+          <div style={{ color:C.muted, fontSize:12, marginTop:2 }}>124K followers · Score 87.4</div>
+          <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, marginTop:12 }}>Subscribe</button>
+        </div>
+      </div>
+      <div style={{ padding:'0 16px' }}>
+        <div style={B.title}>Trending Tracks</div>
+        <div style={{ display:'flex', gap:10, overflowX:'auto' }}>
+          {TRACKS.map(t => <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:126, padding:11, cursor:'pointer' }}><div style={{ height:58, borderRadius:8, background:'linear-gradient(135deg,#D4AF3728,#111)', display:'grid', placeItems:'center', marginBottom:7, color:C.gold }}>▶</div><div style={{ fontSize:12, fontWeight:700 }}>{t.title}</div><div style={{ color:C.muted, fontSize:10 }}>{t.plays} plays</div></div>)}
+        </div>
+      </div>
+      <div style={{ padding:'22px 16px 0' }}>
+        <div style={B.title}>Your Release Feed</div>
+        {TRACKS.map(t => <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, padding:11, marginBottom:8, display:'flex', justifyContent:'space-between', cursor:'pointer' }}><div><div style={{ fontSize:13, fontWeight:700 }}>{t.title}</div><div style={{ color:C.muted, fontSize:11 }}>New from artists you follow</div></div><span style={{ color:C.gold, fontSize:12 }}>Play</span></div>)}
+      </div>
+      <div style={{ padding:'16px 16px 0' }}>
+        <div style={B.title}>Explore Creator Tools</div>
+        <div style={{ ...B.card, padding:12, marginBottom:8 }}>
+          <div style={{ color:C.text, fontWeight:700, marginBottom:6 }}>Everything you need in one place</div>
+          <div style={{ color:C.muted, fontSize:11, marginBottom:10 }}>Upload music, track earnings, connect with fans, grow your career.</div>
+          <button onClick={() => setScreen('features')} style={{ ...B.outlineBtn, width:'100%' }}>See All Features</button>
+        </div>
+      </div>
+    </div>
+    <BottomNav screen="home" setScreen={setScreen} />
+  </div>
+);
+
+const SearchScreen = ({ setScreen, setTrack }) => (
+  <div style={B.screen}><Header title="Search & Discovery" subtitle="Tracks · Artists · Podcasts" />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      <input style={{ ...B.input, marginBottom:10 }} placeholder="Search by track, artist, mood, genre..." />
+      <div style={{ ...B.card, padding:12, marginBottom:12 }}><div style={{ color:C.gold, fontSize:12, fontWeight:700, marginBottom:6 }}>Taxonomy</div><div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>{['R&B','Soul','Hip-Hop','Late Night','Focus','Film','Podcast','Trending'].map(c => <span key={c} style={{ border:`1px solid ${C.line}`, borderRadius:99, padding:'4px 9px', color:C.muted, fontSize:11 }}>{c}</span>)}</div></div>
+      {TRACKS.map(t => <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, padding:11, marginBottom:8, display:'flex', justifyContent:'space-between', cursor:'pointer' }}><div><div style={{ fontSize:13, fontWeight:700 }}>{t.title}</div><div style={{ color:C.muted, fontSize:11 }}>{t.artist} · {t.plays}</div></div><span style={{ color:C.gold }}>▶</span></div>)}
+    </div>
+    <BottomNav screen="search" setScreen={setScreen} />
+  </div>
+);
+
+const LibraryScreen = ({ setScreen }) => (
+  <div style={B.screen}><Header title="Library" subtitle="Your creator toolkit" />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>{[['Upload Music','upload'],['Streaming','streamingops'],['Podcasts & Film','podcast'],['Learn & Grow','education'],['Merch','merch'],['Content Review','approval'],['Readiness Check','launch'],['All Features','features']].map(([label, route]) => <div key={label} onClick={() => setScreen(route)} style={{ ...B.card, padding:12, cursor:'pointer' }}><div style={{ fontWeight:700, fontSize:13 }}>{label}</div><div style={{ color:C.muted, fontSize:11, marginTop:4 }}>Manage & explore</div></div>)}</div></div>
+    <BottomNav screen="library" setScreen={setScreen} />
+  </div>
+);
+
+const CommunityScreen = ({ setScreen }) => (
+  <div style={B.screen}><Header title="Community" subtitle="Fanfare + Networking" />
+    <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
+      <div style={{ ...B.card, padding:12, marginBottom:8 }}><div style={{ color:C.gold, fontWeight:800 }}>Fanfare Forum</div><div style={{ color:C.muted, fontSize:12, marginTop:4 }}>Topics, posts, replies, playlist sharing, fan engagement feed.</div><button onClick={() => setScreen('fanfare')} style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Open Fanfare</button></div>
+      <div style={{ ...B.card, padding:12, marginBottom:8 }}><div style={{ color:C.gold, fontWeight:800 }}>Networking Directory</div><div style={{ color:C.muted, fontSize:12, marginTop:4 }}>Artists, producers, engineers, managers directory.</div><button onClick={() => setScreen('networking')} style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Open Networking</button></div>
+      <button onClick={() => setScreen('admin')} style={{ ...B.outlineBtn, width:'100%' }}>Admin Moderation</button>
+    </div>
+    <BottomNav screen="community" setScreen={setScreen} />
+  </div>
+);
+
+const ArtistScreen = ({ setScreen, setTrack }) => (
+  <div style={B.screen}>
+    <div style={{ height:170, background:'linear-gradient(135deg,#1C1501,#2A1F00 60%,#111)', position:'relative' }}><div style={{ position:'absolute', top:48, left:12 }}><button onClick={() => setScreen('home')} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:'#00000044', color:C.text, cursor:'pointer' }}>←</button></div><div style={{ position:'absolute', left:16, bottom:-44, width:88, height:88, borderRadius:'50%', background:'linear-gradient(135deg,#D4AF37,#8A6A18)', border:`3px solid ${C.bg}`, color:C.bg, fontSize:28, fontWeight:900, display:'grid', placeItems:'center' }}>MA</div></div>
+    <div style={{ ...B.scroll, padding:'52px 16px 24px' }}>
+      <div style={{ fontSize:24, fontWeight:900 }}>Marcus Allen</div><div style={{ color:C.muted, fontSize:12 }}>124K Followers · Score 87.4 · 48 Tracks</div>
+      <div style={{ display:'flex', gap:8, marginTop:12 }}><button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, flex:1 }}>$9.99/mo Subscribe</button><button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Dashboard</button></div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginTop:8, marginBottom:12 }}><button onClick={() => setScreen('wallet')} style={B.outlineBtn}>Wallet</button><button onClick={() => setScreen('settings')} style={B.outlineBtn}>Settings</button><button onClick={() => setScreen('upload')} style={B.outlineBtn}>Upload</button><button onClick={() => setScreen('notifications')} style={B.outlineBtn}>Notifications</button></div>
+      {TRACKS.map((t, i) => <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, padding:11, marginBottom:8, display:'flex', justifyContent:'space-between', cursor:'pointer' }}><span style={{ color:C.muted, fontSize:12 }}>{i + 1}. {t.title}</span><span style={{ color:C.muted, fontSize:11 }}>{t.duration}</span></div>)}
+    </div>
+    <BottomNav screen="artist" setScreen={setScreen} />
+  </div>
+);
+
+const PlayerScreen = ({ setScreen, track }) => {
+  const [playing, setPlaying] = React.useState(true);
+  const t = track || TRACKS[0];
+  return <div style={{ ...B.screen, background:'linear-gradient(180deg,#1D1602,#0A0A0A 40%)' }}>
+    <Header title="Now Playing" subtitle="OWNLN Player" onBack={() => setScreen('artist')} />
+    <div style={{ ...B.scroll, padding:'8px 22px 24px' }}>
+      <div style={{ aspectRatio:'1', borderRadius:18, border:`1px solid ${C.goldBorder}`, background:'linear-gradient(135deg,#2A1F00,#1A1A1A,#111)', display:'grid', placeItems:'center' }}><div style={{ width:150, height:150, borderRadius:'50%', border:`1px solid ${C.goldBorder}`, display:'grid', placeItems:'center' }}><div style={{ width:70, height:70, borderRadius:'50%', border:`1px solid ${C.goldBorder}`, display:'grid', placeItems:'center' }}><div style={{ width:20, height:20, borderRadius:'50%', background:C.gold }}></div></div></div></div>
+      <div style={{ marginTop:18 }}><div style={{ fontSize:24, fontWeight:900 }}>{t.title}</div><div style={{ color:C.muted }}>{t.artist}</div></div>
+      <div style={{ marginTop:14, height:4, borderRadius:3, background:C.line }}><div style={{ width:'37%', height:'100%', background:C.gold, borderRadius:3 }}></div></div>
+      <div style={{ display:'flex', justifyContent:'space-between', marginTop:6, color:C.muted, fontSize:11 }}><span>1:24</span><span>3:47</span></div>
+      <div style={{ marginTop:20, display:'flex', justifyContent:'space-between', alignItems:'center' }}><span style={{ color:C.muted }}>⤮</span><button style={{ background:'transparent', border:'none', color:C.text }}>⏮</button><button onClick={() => setPlaying(!playing)} style={{ width:66, height:66, borderRadius:'50%', border:'none', background:C.gold, display:'grid', placeItems:'center', animation:'glow 2s ease infinite' }}>{playing ? '⏸' : '▶'}</button><button style={{ background:'transparent', border:'none', color:C.text }}>⏭</button><span style={{ color:C.muted }}>↻</span></div>
+      <button style={{ ...B.outlineBtn, width:'100%', marginTop:14 }}>Show Lyrics</button>
+    </div>
+  </div>;
+};
+
+const OpiScreen = ({ setScreen }) => <div style={B.screen}><Header title="My Dashboard" subtitle="Performance insights and earnings" onBack={() => setScreen('artist')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ display:'grid', placeItems:'center', marginBottom:14 }}><div style={{ width:150, height:150, borderRadius:'50%', background:`conic-gradient(${C.gold} 0% 87.4%, ${C.line} 87.4% 100%)`, display:'grid', placeItems:'center' }}><div style={{ width:124, height:124, borderRadius:'50%', background:C.bg, display:'grid', placeItems:'center' }}><div><div style={{ color:C.gold, fontSize:34, fontWeight:900 }}>87.4</div><div style={{ color:C.muted, fontSize:11 }}>PERFORMANCE</div></div></div></div></div><div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8, marginBottom:10 }}>{[['48.2K','Streams'],['124K','Followers'],['$3,240','Revenue']].map(([v,l]) => <div key={l} style={{ ...B.card, padding:10, textAlign:'center' }}><div style={{ fontWeight:900 }}>{v}</div><div style={{ color:C.muted, fontSize:10 }}>{l}</div></div>)}</div><div style={{ ...B.card, padding:11, marginBottom:10 }}><div style={{ fontWeight:700, marginBottom:8 }}>Revenue Split 80/20</div><div style={{ height:10, borderRadius:8, background:C.line }}><div style={{ width:'80%', height:'100%', background:C.gold, borderRadius:8 }}></div></div></div></div></div>;
+const WalletScreen = ({ setScreen }) => <div style={B.screen}><Header title="My Wallet" subtitle="Your earnings, tracked and ready" onBack={() => setScreen('artist')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ ...B.card, borderColor:C.goldBorder, padding:14, textAlign:'center', background:'linear-gradient(135deg,#1D1602,#1A1A1A)' }}><div style={{ color:C.muted, fontSize:11 }}>TOTAL EARNED</div><div style={{ color:C.gold, fontSize:40, fontWeight:900 }}>$3,240</div><button style={{ ...B.goldBtn, width:'100%', marginTop:10 }}>Withdraw</button></div><div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginTop:10 }}><div style={{ ...B.card, padding:11 }}><div style={{ color:C.muted, fontSize:11 }}>Pending</div><div style={{ color:C.gold, fontSize:22, fontWeight:900 }}>$1,840</div></div><div style={{ ...B.card, padding:11 }}><div style={{ color:C.muted, fontSize:11 }}>Paid Out</div><div style={{ color:C.success, fontSize:22, fontWeight:900 }}>$1,400</div></div></div><div style={{ fontWeight:700, margin:'12px 0 8px' }}>Transactions</div>{TXS.map(tx => <div key={tx.title} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}><div><div style={{ fontSize:13, fontWeight:700 }}>{tx.title}</div><div style={{ color:C.muted, fontSize:11 }}>{tx.date}</div></div><div style={{ color:tx.type === 'in' ? C.success : C.danger, fontWeight:800 }}>{tx.amount}</div></div>)}</div></div>;
+const SubscribeScreen = ({ setScreen }) => <div style={B.screen}><Header title="Support Marcus Allen" subtitle="Fan subscriptions" onBack={() => setScreen('artist')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}><div style={{ ...B.card, padding:11 }}><div style={{ color:C.muted, fontSize:10 }}>FREE</div><div style={{ fontSize:28, fontWeight:900 }}>$0</div><div style={{ color:C.muted, fontSize:11 }}>Stream, follow, basic access</div></div><div style={{ ...B.card, padding:11, borderColor:C.gold }}><div style={{ color:C.gold, fontSize:10, fontWeight:800 }}>PRO</div><div style={{ color:C.gold, fontSize:28, fontWeight:900 }}>$9.99</div><div style={{ color:C.muted, fontSize:11 }}>Exclusive content, DMs, early releases, BTS</div></div></div><button style={{ ...B.goldBtn, width:'100%', marginTop:12 }}>Subscribe Now</button><div style={{ marginTop:9, textAlign:'center', color:C.muted, fontSize:12 }}><span style={{ color:C.gold, fontWeight:700 }}>80%</span> goes directly to the artist.</div></div></div>;
+const UploadScreen = ({ setScreen }) => <div style={B.screen}><Header title="Upload Music" subtitle="Share your work with the world" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ ...B.card, borderStyle:'dashed', borderColor:C.goldBorder, padding:16, textAlign:'center' }}><div style={{ color:C.gold, fontSize:20 }}>⇪</div><div style={{ fontWeight:700, marginTop:8 }}>Upload WAV or MP3</div><div style={{ color:C.muted, fontSize:11, marginTop:4 }}>High-quality streaming for your fans. Schedule releases and track performance.</div></div></div></div>;
+const StreamingOpsScreen = ({ setScreen }) => <div style={B.screen}><Header title="Streaming Quality" subtitle="Your fans hear every detail" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ ...B.card, padding:12, marginBottom:8 }}><div style={{ fontWeight:700, marginBottom:6 }}>High-quality playback everywhere</div><div style={{ color:C.muted, fontSize:11 }}>Adaptive streaming ensures smooth listening on any device or connection speed.</div></div>{['Auto quality adjustment','Fast global delivery','Session continuity','Error-free playback'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}><span style={{ fontSize:12 }}>{item}</span><span style={{ color:C.gold, fontSize:11 }}>Active</span></div>)}</div></div>;
+const PodcastScreen = ({ setScreen }) => <div style={B.screen}><Header title="Podcasts & Film" subtitle="Long-form content for deeper connections" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{[1,2,3].map(i => <div key={i} style={{ ...B.card, padding:11, marginBottom:8 }}><div style={{ fontWeight:700 }}>Creator Deep Session #{i}</div><div style={{ color:C.muted, fontSize:11 }}>Exclusive behind-the-scenes video content for subscribers</div></div>)}</div></div>;
+const EducationScreen = ({ setScreen }) => <div style={B.screen}><Header title="Learn & Grow" subtitle="Build your music career" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['Music Business Basics','Marketing for Indie Artists','Templates & Contracts (Pro)','Growth Analytics Playbook (Pro)'].map((t, i) => <div key={t} style={{ ...B.card, padding:11, marginBottom:8, borderColor:i > 1 ? C.goldBorder : C.line }}><div style={{ display:'flex', justifyContent:'space-between' }}><span style={{ fontWeight:700, fontSize:13 }}>{t}</span><span style={{ fontSize:10, color:i > 1 ? C.gold : C.muted }}>{i > 1 ? 'PRO' : 'FREE'}</span></div></div>)}</div></div>;
+const MerchScreen = ({ setScreen }) => <div style={B.screen}><Header title="Merch Store" subtitle="Sell directly to your fans" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}><div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>{['Gold Hoodie','Signature Cap','Tour Tee','Poster Pack'].map((m, i) => <div key={m} style={{ ...B.card, padding:10 }}><div style={{ height:80, borderRadius:8, background:i % 2 ? '#141414' : 'linear-gradient(135deg,#D4AF3725,#111)', marginBottom:6 }}></div><div style={{ fontWeight:700, fontSize:12 }}>{m}</div></div>)}</div></div></div>;
+const ApprovalQueueScreen = ({ setScreen }) => <div style={B.screen}><Header title="Content Review" subtitle="Track your submissions" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['Track: Midnight Gold (awaiting review)','Podcast episode: Session #3 (checking access settings)','Merch item: Gold Hoodie (syncing to store)'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.muted, fontSize:12 }}>{item}</div>)}</div></div>;
+const LaunchReadinessScreen = ({ setScreen }) => <div style={B.screen}><Header title="Readiness Check" subtitle="Make sure you're ready to go live" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['iOS app availability','Android app availability','Performance optimized','Security verified','Monitoring active'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, display:'flex', justifyContent:'space-between' }}><span style={{ color:C.text, fontSize:12 }}>{item}</span><span style={{ color:C.gold, fontSize:11 }}>Ready</span></div>)}</div></div>;
+const FeaturesScreen = ({ setScreen }) => <div style={B.screen}><Header title="All Features" subtitle="Everything creators need" onBack={() => setScreen('library')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{[
+  ['Your Profile','Build your brand and connect with fans','artist'],
+  ['Upload Music','Share tracks and albums instantly','upload'],
+  ['Discover & Stream','Find new music and curate playlists','home'],
+  ['High-Quality Playback','Studio-grade streaming experience','streamingops'],
+  ['Earnings & Wallet','Track revenue and get paid faster','wallet'],
+  ['Fan Subscriptions','Unlock exclusive content and perks','subscribe'],
+  ['Podcasts & Film','Long-form video and audio storytelling','podcast'],
+  ['Learn & Grow','Music business education and tools','education'],
+  ['Community','Connect with fans and collaborators','community'],
+  ['Admin Tools','Manage content and settings','admin'],
+].map(([title, detail, route]) => <div key={title} style={{ ...B.card, padding:11, marginBottom:8 }}><div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}><div><div style={{ fontSize:13, fontWeight:700 }}>{title}</div><div style={{ color:C.muted, fontSize:11 }}>{detail}</div></div><button onClick={() => setScreen(route)} style={{ ...B.outlineBtn, padding:'6px 10px', borderRadius:10 }}>Open</button></div></div>)}</div></div>;
+const FanfareScreen = ({ setScreen }) => <div style={B.screen}><Header title="Fanfare Forum" subtitle="Topics, posts, replies" onBack={() => setScreen('community')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['Favorite tracks this week','Marcus Allen release discussion','Playlist swap: Neo-soul nights'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.muted, fontSize:12 }}>{item}</div>)}</div></div>;
+const NetworkingScreen = ({ setScreen }) => <div style={B.screen}><Header title="Networking Directory" subtitle="Artists, producers, engineers, managers" onBack={() => setScreen('community')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['Ari Vega — Producer','Noah Lane — Mix Engineer','Maya Quinn — Artist Manager'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.muted, fontSize:12 }}>{item}</div>)}</div></div>;
+const NotificationsScreen = ({ setScreen }) => <div style={B.screen}><Header title="Notifications" subtitle="Release alerts, replies, payouts" onBack={() => setScreen('artist')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['New Pro subscriber joined','Payout batch processed','New reply in Fanfare thread','New release from followed artist'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.muted, fontSize:12 }}>{item}</div>)}</div></div>;
+const AdminScreen = ({ setScreen }) => <div style={B.screen}><Header title="Admin Center" subtitle="Platform management tools" onBack={() => setScreen('community')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['User management','Content moderation','Subscription management','Featured artist placement','Copyright protection'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.muted, fontSize:12 }}>{item}</div>)}</div></div>;
+const SettingsScreen = ({ setScreen, onLogout }) => <div style={B.screen}><Header title="Settings" subtitle="Account, billing, preferences" onBack={() => setScreen('artist')} /><div style={{ ...B.scroll, padding:'0 16px 24px' }}>{['Profile & account','Notification preferences','Billing & subscription','Privacy & security'].map(item => <div key={item} style={{ ...B.card, padding:11, marginBottom:7, color:C.text, fontSize:12 }}>{item}</div>)}<div style={{ ...B.card, padding:12, borderColor:'#5A2A2A', marginTop:8 }}><div style={{ fontWeight:700, marginBottom:6 }}>Logout</div><div style={{ color:C.muted, fontSize:11, marginBottom:10 }}>Exit this session and return to the login screen.</div><button onClick={onLogout} style={{ width:'100%', border:'1px solid #8A3D3D', background:'transparent', color:C.danger, borderRadius:24, padding:'10px 14px', fontWeight:800, cursor:'pointer' }}>Logout</button></div></div></div>;
+
+const App = () => {
+  const [mode, setMode] = React.useState('login');
+  const [authed, setAuthed] = React.useState(false);
+  const [screen, setScreen] = React.useState('home');
+  const [track, setTrack] = React.useState(TRACKS[0]);
+
+  const logout = () => { setAuthed(false); setMode('login'); setScreen('home'); };
+  if (!authed) return <AuthScreen mode={mode} setMode={setMode} onDone={() => { setAuthed(true); setScreen('home'); }} />;
+
+  const routes = {
+    home:<HomeScreen setScreen={setScreen} setTrack={setTrack} />,
+    search:<SearchScreen setScreen={setScreen} setTrack={setTrack} />,
+    library:<LibraryScreen setScreen={setScreen} />,
+    community:<CommunityScreen setScreen={setScreen} />,
+    artist:<ArtistScreen setScreen={setScreen} setTrack={setTrack} />,
+    player:<PlayerScreen setScreen={setScreen} track={track} />,
+    opi:<OpiScreen setScreen={setScreen} />,
+    wallet:<WalletScreen setScreen={setScreen} />,
+    subscribe:<SubscribeScreen setScreen={setScreen} />,
+    upload:<UploadScreen setScreen={setScreen} />,
+    streamingops:<StreamingOpsScreen setScreen={setScreen} />,
+    podcast:<PodcastScreen setScreen={setScreen} />,
+    education:<EducationScreen setScreen={setScreen} />,
+    merch:<MerchScreen setScreen={setScreen} />,
+    approval:<ApprovalQueueScreen setScreen={setScreen} />,
+    launch:<LaunchReadinessScreen setScreen={setScreen} />,
+    features:<FeaturesScreen setScreen={setScreen} />,
+    fanfare:<FanfareScreen setScreen={setScreen} />,
+    networking:<NetworkingScreen setScreen={setScreen} />,
+    notifications:<NotificationsScreen setScreen={setScreen} />,
+    admin:<AdminScreen setScreen={setScreen} />,
+    settings:<SettingsScreen setScreen={setScreen} onLogout={logout} />,
+  };
+
+  return routes[screen] || routes.home;
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
