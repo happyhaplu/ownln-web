@@ -8,12 +8,14 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100vh; background: #070604; display: flex; justify-content: center; align-items: flex-start; font-family: system-ui, -apple-system, sans-serif; }
-    #root { width: 390px; min-height: 100vh; background: #0D0B08; color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid #1D1913; border-right: 1px solid #1D1913; }
+    body { min-height: 100vh; background: #000000; display: flex; justify-content: center; align-items: flex-start; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    #root { width: 390px; min-height: 100vh; background: #0A0A0A; color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid #1F1F1F; border-right: 1px solid #1F1F1F; }
     ::-webkit-scrollbar { width: 0; height: 0; }
-    @keyframes glow { 0%,100% { box-shadow: 0 0 7px #C8952A33; } 50% { box-shadow: 0 0 14px #C8952A44; } }
+    @keyframes glow { 0%,100% { box-shadow: 0 0 12px #D4A57422, 0 4px 16px #00000044; } 50% { box-shadow: 0 0 20px #D4A57433, 0 6px 24px #00000055; } }
     @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
@@ -22,9 +24,9 @@
 
 /* ── DESIGN TOKENS ─────────────────────── */
 const C = {
-  bg:'#0D0B08', card:'#12100D', card2:'#17130F',
-  gold:'#C8952A', goldDim:'#C8952A55', goldBg:'#1A1409',
-  text:'#F8F6F2', muted:'#95897A', line:'#2A241D',
+  bg:'#0A0A0A', card:'#141414', card2:'#1A1A1A',
+  gold:'#D4A574', goldDim:'#D4A57455', goldBg:'#1C1410',
+  text:'#FFFFFF', muted:'#999999', line:'#2A2A2A',
   success:'#59B17A', danger:'#D26A6A', blue:'#4A9EFF',
 };
 
@@ -60,26 +62,26 @@ const TXS = [
 
 /* ── BASE STYLES ───────────────────────── */
 const B = {
-  screen:{ minHeight:'100vh', background:C.bg, color:C.text, display:'flex', flexDirection:'column', animation:'rise .18s ease' },
+  screen:{ minHeight:'100vh', background:C.bg, color:C.text, display:'flex', flexDirection:'column', animation:'fadeIn .25s ease' },
   scroll:{ flex:1, overflowY:'auto', paddingBottom:'150px' },
-  card:{ background:C.card, border:`1px solid ${C.line}`, borderRadius:14 },
-  goldCard:{ background:`linear-gradient(135deg,${C.goldBg},${C.card2} 65%,#0F0D0A)`, border:`1px solid ${C.goldDim}`, borderRadius:14 },
-  title:{ fontSize:16, fontWeight:800, marginBottom:10 },
-  goldBtn:{ background:C.gold, color:C.bg, border:'none', borderRadius:24, padding:'12px 18px', fontWeight:800, cursor:'pointer', fontSize:14 },
-  outlineBtn:{ background:'transparent', color:C.gold, border:`1px solid ${C.goldDim}`, borderRadius:24, padding:'10px 14px', fontWeight:700, cursor:'pointer', fontSize:13 },
-  ghostBtn:{ background:'transparent', color:C.muted, border:`1px solid ${C.line}`, borderRadius:24, padding:'8px 12px', fontWeight:600, cursor:'pointer', fontSize:12 },
-  input:{ width:'100%', background:'#111', color:C.text, border:`1px solid ${C.line}`, borderRadius:12, padding:'12px 14px', outline:'none', fontSize:14 },
-  top:{ padding:'48px 16px 12px' },
-  pill:{ borderRadius:99, padding:'5px 12px', fontSize:11, fontWeight:700, cursor:'pointer' },
+  card:{ background:C.card, border:`1px solid ${C.line}`, borderRadius:16, boxShadow:'0 2px 12px rgba(0,0,0,0.3)' },
+  goldCard:{ background:`linear-gradient(135deg,${C.goldBg},${C.card2} 65%,#0F0D0A)`, border:`1px solid ${C.goldDim}`, borderRadius:16, boxShadow:'0 4px 20px rgba(212,165,116,0.1)' },
+  title:{ fontSize:18, fontWeight:800, marginBottom:12, letterSpacing:-0.3 },
+  goldBtn:{ background:`linear-gradient(135deg,#E5B76B,${C.gold})`, color:'#000000', border:'none', borderRadius:28, padding:'14px 24px', fontWeight:800, cursor:'pointer', fontSize:14, boxShadow:'0 4px 16px rgba(212,165,116,0.25)', transition:'all 0.2s ease', letterSpacing:0.3 },
+  outlineBtn:{ background:'rgba(212,165,116,0.05)', color:C.gold, border:`1.5px solid ${C.gold}`, borderRadius:28, padding:'12px 20px', fontWeight:700, cursor:'pointer', fontSize:13, transition:'all 0.2s ease', backdropFilter:'blur(10px)' },
+  ghostBtn:{ background:'rgba(255,255,255,0.03)', color:C.muted, border:`1px solid ${C.line}`, borderRadius:26, padding:'10px 16px', fontWeight:600, cursor:'pointer', fontSize:12, transition:'all 0.2s ease' },
+  input:{ width:'100%', background:'rgba(255,255,255,0.03)', color:C.text, border:`1px solid ${C.line}`, borderRadius:14, padding:'14px 16px', outline:'none', fontSize:14, transition:'all 0.2s ease', fontWeight:500 },
+  top:{ padding:'52px 20px 16px' },
+  pill:{ borderRadius:99, padding:'7px 16px', fontSize:11, fontWeight:700, cursor:'pointer', transition:'all 0.2s ease', letterSpacing:0.3 },
 };
 
 /* ── SHARED COMPONENTS ─────────────────── */
 const Header = ({ title, subtitle, onBack, right }) => (
-  <div style={{ ...B.top, display:'flex', alignItems:'center', gap:10 }}>
-    {onBack && <button onClick={onBack} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:'#151515', color:C.text, cursor:'pointer', flexShrink:0 }}>←</button>}
+  <div style={{ ...B.top, display:'flex', alignItems:'center', gap:12 }}>
+    {onBack && <button onClick={onBack} style={{ width:38, height:38, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.text, cursor:'pointer', flexShrink:0, boxShadow:'0 2px 8px rgba(0,0,0,0.3)', fontSize:16, display:'grid', placeItems:'center', transition:'all 0.2s ease' }}>←</button>}
     <div style={{ flex:1 }}>
-      <div style={{ fontSize:19, fontWeight:900 }}>{title}</div>
-      {subtitle && <div style={{ color:C.muted, fontSize:12, marginTop:1 }}>{subtitle}</div>}
+      <div style={{ fontSize:22, fontWeight:900, letterSpacing:-0.5 }}>{title}</div>
+      {subtitle && <div style={{ color:C.muted, fontSize:12, marginTop:2, fontWeight:500 }}>{subtitle}</div>}
     </div>
     {right}
   </div>
@@ -92,21 +94,21 @@ const StatusBar = () => (
 );
 
 const Tag = ({ label, active, onClick }) => (
-  <span onClick={onClick} style={{ ...B.pill, background: active ? C.gold : C.card, color: active ? C.bg : C.muted, border: active ? 'none' : `1px solid ${C.line}`, display:'inline-block' }}>{label}</span>
+  <span onClick={onClick} style={{ ...B.pill, background: active ? `linear-gradient(135deg,#E5B76B,${C.gold})` : 'rgba(255,255,255,0.03)', color: active ? '#000000' : C.muted, border: active ? 'none' : `1px solid ${C.line}`, display:'inline-block', boxShadow: active ? '0 2px 12px rgba(212,165,116,0.25)' : 'none', fontWeight: active ? 800 : 600 }}>{label}</span>
 );
 
 const TrackRow = ({ track, onPlay, showLike }) => {
   const [liked, setLiked] = React.useState(false);
   return (
-    <div style={{ ...B.card, padding:'10px 12px', marginBottom:8, display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={onPlay}>
-      <div style={{ width:44, height:44, borderRadius:10, background:`linear-gradient(135deg,${C.goldDim},#111)`, display:'grid', placeItems:'center', flexShrink:0, color:C.gold, fontSize:15 }}>▶</div>
+    <div style={{ ...B.card, padding:'12px 14px', marginBottom:10, display:'flex', alignItems:'center', gap:12, cursor:'pointer', transition:'all 0.2s ease' }} onClick={onPlay}>
+      <div style={{ width:48, height:48, borderRadius:12, background:`linear-gradient(135deg,rgba(212,165,116,0.15),rgba(20,20,20,0.8))`, display:'grid', placeItems:'center', flexShrink:0, color:C.gold, fontSize:16, boxShadow:'inset 0 1px 2px rgba(212,165,116,0.2)' }}>▶</div>
       <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ fontSize:13, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{track.title}</div>
-        <div style={{ color:C.muted, fontSize:11 }}>{track.artist} · {track.plays} plays</div>
+        <div style={{ fontSize:14, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.2 }}>{track.title}</div>
+        <div style={{ color:C.muted, fontSize:11, marginTop:3, fontWeight:500 }}>{track.artist} · {track.plays} plays</div>
       </div>
-      <div style={{ display:'flex', gap:8, alignItems:'center', flexShrink:0 }}>
-        {showLike && <span onClick={e=>{ e.stopPropagation(); setLiked(!liked); }} style={{ fontSize:16, cursor:'pointer', color: liked ? C.gold : C.muted }}>{liked ? '♥' : '♡'}</span>}
-        <span style={{ color:C.muted, fontSize:11 }}>{track.duration}</span>
+      <div style={{ display:'flex', gap:10, alignItems:'center', flexShrink:0 }}>
+        {showLike && <span onClick={e=>{ e.stopPropagation(); setLiked(!liked); }} style={{ fontSize:17, cursor:'pointer', color: liked ? C.gold : C.muted, transition:'all 0.2s ease' }}>{liked ? '♥' : '♡'}</span>}
+        <span style={{ color:C.muted, fontSize:11, fontWeight:600 }}>{track.duration}</span>
       </div>
     </div>
   );
@@ -117,11 +119,11 @@ const BottomNav = ({ screen, setScreen, role }) => {
     ? [{ id:'home', icon:'⌂', label:'Home' },{ id:'search', icon:'⌕', label:'Discover' },{ id:'library', icon:'▤', label:'Studio' },{ id:'community', icon:'◎', label:'Community' },{ id:'artist', icon:'◉', label:'Profile' }]
     : [{ id:'home', icon:'⌂', label:'Home' },{ id:'search', icon:'⌕', label:'Discover' },{ id:'library', icon:'▤', label:'Library' },{ id:'community', icon:'◎', label:'Community' },{ id:'fanprofile', icon:'◉', label:'Me' }];
   return (
-    <div style={{ position:'fixed', bottom:0, width:390, background:C.card2, borderTop:`1px solid ${C.line}`, padding:'8px 0 14px', display:'flex', justifyContent:'space-around', zIndex:20 }}>
+    <div style={{ position:'fixed', bottom:0, width:390, background:'rgba(20,20,20,0.95)', backdropFilter:'blur(20px)', borderTop:`1px solid ${C.line}`, padding:'10px 0 16px', display:'flex', justifyContent:'space-around', zIndex:20, boxShadow:'0 -4px 24px rgba(0,0,0,0.3)' }}>
       {tabs.map(t => {
         const active = t.id === screen;
-        return <div key={t.id} onClick={() => setScreen(t.id)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:2, color:active ? C.gold : C.muted, fontSize:10, fontWeight:700, cursor:'pointer' }}>
-          <span style={{ fontSize:18 }}>{t.icon}</span><span>{t.label}</span>
+        return <div key={t.id} onClick={() => setScreen(t.id)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:4, color:active ? C.gold : C.muted, fontSize:10, fontWeight:700, cursor:'pointer', transition:'all 0.2s ease', letterSpacing:0.3 }}>
+          <span style={{ fontSize:20 }}>{t.icon}</span><span style={{ fontWeight: active ? 800 : 600 }}>{t.label}</span>
         </div>;
       })}
     </div>
@@ -132,20 +134,20 @@ const PersistentPlayer = ({ track, playing, setPlaying, setScreen, panel, setPan
   if (!track) return null;
   return (
     <>
-      <div style={{ position:'fixed', bottom:58, width:390, background:'linear-gradient(180deg,#18130F,#120F0C)', borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, zIndex:25, padding:'8px 10px' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <div onClick={() => setScreen('player')} style={{ width:36, height:36, borderRadius:8, background:`linear-gradient(135deg,${C.goldDim},#111)`, display:'grid', placeItems:'center', color:C.gold, cursor:'pointer' }}>▶</div>
+      <div style={{ position:'fixed', bottom:68, width:390, background:'rgba(20,18,16,0.98)', backdropFilter:'blur(30px)', borderTop:`1px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, zIndex:25, padding:'10px 12px', boxShadow:'0 -2px 20px rgba(0,0,0,0.4)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div onClick={() => setScreen('player')} style={{ width:42, height:42, borderRadius:10, background:`linear-gradient(135deg,rgba(212,165,116,0.2),rgba(20,20,20,0.9))`, display:'grid', placeItems:'center', color:C.gold, cursor:'pointer', boxShadow:'0 2px 12px rgba(212,165,116,0.15)', fontSize:14 }}>▶</div>
           <div onClick={() => setScreen('player')} style={{ flex:1, minWidth:0, cursor:'pointer' }}>
-            <div style={{ fontSize:12, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{track.title}</div>
-            <div style={{ color:C.muted, fontSize:10, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{track.artist}</div>
+            <div style={{ fontSize:13, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.2 }}>{track.title}</div>
+            <div style={{ color:C.muted, fontSize:10, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', marginTop:2, fontWeight:500 }}>{track.artist}</div>
           </div>
-          <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-            <button onClick={() => setPanel('queue')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:15 }}>☰</button>
-            <button onClick={() => setPlaying(!playing)} style={{ background:'transparent', border:'none', color:C.gold, cursor:'pointer', fontSize:18 }}>{playing ? '⏸' : '▶'}</button>
-            <button onClick={() => setPanel('lyrics')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:15 }}>♫</button>
+          <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+            <button onClick={() => setPanel('queue')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:16, transition:'all 0.2s ease' }}>☰</button>
+            <button onClick={() => setPlaying(!playing)} style={{ background:'transparent', border:'none', color:C.gold, cursor:'pointer', fontSize:20, transition:'all 0.2s ease' }}>{playing ? '⏸' : '▶'}</button>
+            <button onClick={() => setPanel('lyrics')} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:16, transition:'all 0.2s ease' }}>♫</button>
           </div>
         </div>
-        <div style={{ marginTop:6, height:2, borderRadius:3, background:C.line }}><div style={{ width:'38%', height:'100%', background:C.gold }}></div></div>
+        <div style={{ marginTop:8, height:3, borderRadius:4, background:'rgba(255,255,255,0.05)' }}><div style={{ width:'38%', height:'100%', background:`linear-gradient(90deg,#E5B76B,${C.gold})`, borderRadius:4, boxShadow:'0 0 8px rgba(212,165,116,0.4)' }}></div></div>
       </div>
 
       {panel && (
@@ -203,33 +205,33 @@ const AuthScreen = ({ onDone }) => {
   const [role, setRole] = React.useState(null);
 
   if (step === 'role') return (
-    <div style={{ ...B.screen, background:'linear-gradient(180deg,#14110D 0%,#0D0B08 55%)' }}>
+    <div style={{ ...B.screen, background:'linear-gradient(180deg,#121212 0%,#0A0A0A 60%)' }}>
       <StatusBar />
-      <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'18px 22px 32px' }}>
-        <div style={{ textAlign:'center', marginTop:24, marginBottom:32 }}>
-          <div style={{ fontSize:34, fontWeight:900, letterSpacing:.5 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
-          <div style={{ color:C.muted, fontSize:13, marginTop:6 }}>How will you use OWNLN?</div>
+      <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'24px 20px 36px' }}>
+        <div style={{ textAlign:'center', marginTop:32, marginBottom:40 }}>
+          <div style={{ fontSize:40, fontWeight:900, letterSpacing:1 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
+          <div style={{ color:C.muted, fontSize:13, marginTop:8, fontWeight:500 }}>How will you use OWNLN?</div>
         </div>
-        <div style={{ display:'grid', gap:12 }}>
+        <div style={{ display:'grid', gap:14 }}>
           {[
             { id:'fan', icon:'🎧', title:"I'm a Fan", sub:'Discover music, support artists, build your collection', badge:'Free · Always' },
             { id:'artist', icon:'🎤', title:"I'm a Creator", sub:'Upload music, earn 80–90% royalties, grow your audience', badge:'Free + Pro Plans' },
           ].map(r => (
-            <div key={r.id} onClick={() => setRole(r.id)} style={{ ...B.card, padding:18, border: role === r.id ? `1px solid ${C.gold}` : `1px solid ${C.line}`, background: role === r.id ? C.goldBg : C.card, cursor:'pointer' }}>
-              <div style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
-                <span style={{ fontSize:28 }}>{r.icon}</span>
+            <div key={r.id} onClick={() => setRole(r.id)} style={{ ...B.card, padding:20, border: role === r.id ? `1.5px solid ${C.gold}` : `1px solid ${C.line}`, background: role === r.id ? `linear-gradient(135deg,${C.goldBg},${C.card2})` : C.card, cursor:'pointer', transition:'all 0.3s ease', boxShadow: role === r.id ? '0 8px 28px rgba(212,165,116,0.2)' : '0 2px 12px rgba(0,0,0,0.3)' }}>
+              <div style={{ display:'flex', gap:14, alignItems:'flex-start' }}>
+                <span style={{ fontSize:32 }}>{r.icon}</span>
                 <div style={{ flex:1 }}>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <div style={{ fontWeight:800, fontSize:16 }}>{r.title}</div>
-                    <span style={{ fontSize:10, color: role === r.id ? C.gold : C.muted, fontWeight:700 }}>{r.badge}</span>
+                    <div style={{ fontWeight:800, fontSize:17, letterSpacing:-0.3 }}>{r.title}</div>
+                    <span style={{ fontSize:10, color: role === r.id ? C.gold : C.muted, fontWeight:700, letterSpacing:0.5 }}>{r.badge}</span>
                   </div>
-                  <div style={{ color:C.muted, fontSize:12, marginTop:4 }}>{r.sub}</div>
+                  <div style={{ color:C.muted, fontSize:12, marginTop:6, lineHeight:1.5, fontWeight:500 }}>{r.sub}</div>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <button onClick={() => role && onDone(role)} disabled={!role} style={{ ...B.goldBtn, width:'100%', marginTop:'auto', paddingTop:14, paddingBottom:14, opacity: role ? 1 : .4, animation:'glow 2s ease infinite' }}>
+        <button onClick={() => role && onDone(role)} disabled={!role} style={{ ...B.goldBtn, width:'100%', marginTop:'auto', paddingTop:16, paddingBottom:16, opacity: role ? 1 : .35, animation: role ? 'glow 2.5s ease infinite' : 'none', fontSize:15, fontWeight:900 }}>
           Continue as {role === 'artist' ? 'Creator' : role === 'fan' ? 'Fan' : '...'}
         </button>
       </div>
@@ -237,39 +239,39 @@ const AuthScreen = ({ onDone }) => {
   );
 
   return (
-    <div style={{ ...B.screen, background:'linear-gradient(180deg,#17120D 0%,#0D0B08 55%)' }}>
+    <div style={{ ...B.screen, background:'linear-gradient(180deg,#141414 0%,#0A0A0A 60%)' }}>
       <StatusBar />
-      <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'14px 22px 28px' }}>
-        <div style={{ textAlign:'center', marginTop:20, marginBottom:20 }}>
-          <div style={{ fontSize:44, fontWeight:900, letterSpacing:.8 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
-          <div style={{ color:C.muted, fontSize:12, marginTop:6 }}>Where creators own their music and future</div>
+      <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'20px 20px 32px' }}>
+        <div style={{ textAlign:'center', marginTop:28, marginBottom:28 }}>
+          <div style={{ fontSize:48, fontWeight:900, letterSpacing:1.2 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
+          <div style={{ color:C.muted, fontSize:13, marginTop:8, fontWeight:500 }}>Where creators own their music and future</div>
         </div>
-        <div style={{ ...B.card, borderColor:C.goldDim, padding:8, marginBottom:14, display:'flex', gap:6 }}>
+        <div style={{ ...B.card, borderColor:C.line, padding:6, marginBottom:16, display:'flex', gap:6, background:'rgba(255,255,255,0.02)' }}>
           {['login','signup'].map(m => (
-            <button key={m} onClick={() => setMode(m)} style={{ flex:1, border: mode===m ? `1px solid ${C.gold}` : '1px solid transparent', background: mode===m ? C.goldBg : '#111', color: mode===m ? C.gold : C.muted, borderRadius:10, padding:'11px 0', fontWeight:800, cursor:'pointer', fontSize:14 }}>
+            <button key={m} onClick={() => setMode(m)} style={{ flex:1, border: mode===m ? `1.5px solid ${C.gold}` : '1px solid transparent', background: mode===m ? `linear-gradient(135deg,${C.goldBg},${C.card2})` : 'transparent', color: mode===m ? C.gold : C.muted, borderRadius:12, padding:'13px 0', fontWeight:800, cursor:'pointer', fontSize:14, transition:'all 0.2s ease', letterSpacing:0.3 }}>
               {m === 'login' ? 'Log In' : 'Sign Up'}
             </button>
           ))}
         </div>
-        <div style={{ ...B.card, padding:18 }}>
-          <div style={{ fontWeight:800, fontSize:16, marginBottom:2 }}>{mode==='login' ? 'Welcome back' : 'Create your account'}</div>
-          <div style={{ color:C.muted, fontSize:12, marginBottom:14 }}>{mode==='login' ? 'Continue your journey' : 'Fans listen free. Creators earn 80–90%.'}</div>
-          <div style={{ display:'grid', gap:10 }}>
+        <div style={{ ...B.card, padding:20 }}>
+          <div style={{ fontWeight:800, fontSize:18, marginBottom:3, letterSpacing:-0.3 }}>{mode==='login' ? 'Welcome back' : 'Create your account'}</div>
+          <div style={{ color:C.muted, fontSize:12, marginBottom:18, fontWeight:500 }}>{mode==='login' ? 'Continue your journey' : 'Fans listen free. Creators earn 80–90%.'}</div>
+          <div style={{ display:'grid', gap:12 }}>
             {mode === 'signup' && <input style={B.input} placeholder="Full name" />}
             <input style={B.input} placeholder="Email address" type="email" />
             <input style={B.input} placeholder="Password" type="password" />
             {mode === 'signup' && <input style={B.input} placeholder="Confirm password" type="password" />}
           </div>
-          {mode === 'login' && <div style={{ textAlign:'right', marginTop:8, fontSize:11, color:C.muted, cursor:'pointer' }}>Forgot password?</div>}
-          <button onClick={() => setStep('role')} style={{ ...B.goldBtn, width:'100%', marginTop:14, animation:'glow 2s ease infinite' }}>
+          {mode === 'login' && <div style={{ textAlign:'right', marginTop:10, fontSize:11, color:C.gold, cursor:'pointer', fontWeight:600 }}>Forgot password?</div>}
+          <button onClick={() => setStep('role')} style={{ ...B.goldBtn, width:'100%', marginTop:16, paddingTop:15, paddingBottom:15, animation:'glow 2.5s ease infinite', fontSize:15 }}>
             {mode === 'login' ? 'Continue' : 'Create Account'}
           </button>
-          <div style={{ display:'flex', alignItems:'center', gap:8, margin:'14px 0', color:C.muted, fontSize:10 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:10, margin:'18px 0', color:C.muted, fontSize:11, fontWeight:600 }}>
             <span style={{ flex:1, height:1, background:C.line }}></span><span>OR</span><span style={{ flex:1, height:1, background:C.line }}></span>
           </div>
-          <button style={{ ...B.ghostBtn, width:'100%' }}>🔵 Continue with Google</button>
+          <button style={{ ...B.ghostBtn, width:'100%', padding:'12px 0', fontSize:13 }}>🔵 Continue with Google</button>
         </div>
-        <div style={{ marginTop:14, textAlign:'center', color:C.muted, fontSize:10 }}>By continuing you agree to our Terms of Service & Privacy Policy</div>
+        <div style={{ marginTop:16, textAlign:'center', color:C.muted, fontSize:10, fontWeight:500, lineHeight:1.5 }}>By continuing you agree to our Terms of Service & Privacy Policy</div>
       </div>
     </div>
   );
@@ -283,10 +285,10 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
   return (
     <div style={B.screen}>
       <div style={{ ...B.top, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <div style={{ fontSize:26, fontWeight:900 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
-        <div style={{ display:'flex', gap:8 }}>
-          <button onClick={() => setScreen('fansaved')} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.text, cursor:'pointer', fontSize:14 }}>♡</button>
-          <button onClick={() => setScreen('notifications')} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.gold, cursor:'pointer' }}>🔔</button>
+        <div style={{ fontSize:28, fontWeight:900, letterSpacing:-0.5 }}><span style={{ color:C.gold }}>OWN</span>LN</div>
+        <div style={{ display:'flex', gap:10 }}>
+          <button onClick={() => setScreen('fansaved')} style={{ width:38, height:38, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.text, cursor:'pointer', fontSize:16, boxShadow:'0 2px 8px rgba(0,0,0,0.3)', transition:'all 0.2s ease' }}>♡</button>
+          <button onClick={() => setScreen('notifications')} style={{ width:38, height:38, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.gold, cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.3)', transition:'all 0.2s ease' }}>🔔</button>
         </div>
       </div>
       <div style={B.scroll}>
@@ -295,48 +297,48 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
             {MOODS.map(m => <Tag key={m} label={m} active={activeMood===m} onClick={() => setActiveMood(m)} />)}
           </div>
         </div>
-        <div style={{ padding:'0 16px 16px' }}>
-          <div style={{ ...B.goldCard, padding:18 }}>
-            <div style={{ color:C.gold, fontSize:10, fontWeight:800, letterSpacing:1 }}>🔥 TRENDING NOW</div>
-            <div style={{ fontSize:22, fontWeight:900, marginTop:4 }}>Midnight Gold</div>
-            <div style={{ color:C.muted, fontSize:12, marginTop:2 }}>Marcus Allen · 2.4M plays</div>
-            <div style={{ display:'flex', gap:8, marginTop:12 }}>
-              <button onClick={() => { setTrack(TRACKS[0]); setScreen('player'); }} style={{ ...B.goldBtn, flex:1, padding:'10px 0', animation:'glow 2s ease infinite' }}>▶ Play</button>
-              <button onClick={() => setScreen('subscribe')} style={{ ...B.outlineBtn, flex:1, padding:'10px 0' }}>Subscribe</button>
+        <div style={{ padding:'0 20px 18px' }}>
+          <div style={{ ...B.goldCard, padding:22 }}>
+            <div style={{ color:C.gold, fontSize:10, fontWeight:900, letterSpacing:1.5 }}>🔥 TRENDING NOW</div>
+            <div style={{ fontSize:24, fontWeight:900, marginTop:6, letterSpacing:-0.5 }}>Midnight Gold</div>
+            <div style={{ color:C.muted, fontSize:13, marginTop:3, fontWeight:500 }}>Marcus Allen · 2.4M plays</div>
+            <div style={{ display:'flex', gap:10, marginTop:16 }}>
+              <button onClick={() => { setTrack(TRACKS[0]); setScreen('player'); }} style={{ ...B.goldBtn, flex:1, padding:'12px 0', animation:'glow 2.5s ease infinite', fontSize:13 }}>▶ Play</button>
+              <button onClick={() => setScreen('subscribe')} style={{ ...B.outlineBtn, flex:1, padding:'12px 0', fontSize:13 }}>Subscribe</button>
             </div>
           </div>
         </div>
-        <div style={{ padding:'0 16px 16px' }}>
+        <div style={{ padding:'0 20px 18px' }}>
           <div style={B.title}>Browse by Genre</div>
-          <div style={{ display:'flex', gap:8, overflowX:'auto', paddingBottom:4 }}>
-            {GENRES.map(g => <div key={g} style={{ ...B.card, padding:'8px 14px', minWidth:'fit-content', cursor:'pointer', fontSize:12, fontWeight:700 }}>{g}</div>)}
+          <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:4 }}>
+            {GENRES.map(g => <div key={g} style={{ ...B.card, padding:'10px 18px', minWidth:'fit-content', cursor:'pointer', fontSize:12, fontWeight:700, letterSpacing:0.2, transition:'all 0.2s ease' }}>{g}</div>)}
           </div>
         </div>
         <div style={{ padding:'0 16px' }}>
           <div style={B.title}>{activeMood === 'For You' ? 'For You' : `${activeMood} Picks`}</div>
           {TRACKS.map(t => <TrackRow key={t.id} track={t} showLike onPlay={() => { setTrack(t); setScreen('player'); }} />)}
         </div>
-        <div style={{ padding:'16px 16px 0' }}>
+        <div style={{ padding:'18px 20px 0' }}>
           <div style={B.title}>New From Artists You Follow</div>
-          <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:8 }}>
+          <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:8 }}>
             {TRACKS.slice(0,4).map(t => (
-              <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:120, padding:10, cursor:'pointer' }}>
-                <div style={{ height:54, borderRadius:8, background:`linear-gradient(135deg,${C.goldDim},#111)`, display:'grid', placeItems:'center', marginBottom:6, color:C.gold, fontSize:18 }}>▶</div>
-                <div style={{ fontSize:11, fontWeight:700 }}>{t.title}</div>
-                <div style={{ color:C.muted, fontSize:10 }}>{t.artist}</div>
+              <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:130, padding:12, cursor:'pointer', transition:'all 0.2s ease' }}>
+                <div style={{ height:60, borderRadius:10, background:`linear-gradient(135deg,rgba(212,165,116,0.2),rgba(20,20,20,0.9))`, display:'grid', placeItems:'center', marginBottom:8, color:C.gold, fontSize:20, boxShadow:'inset 0 2px 4px rgba(212,165,116,0.15)' }}>▶</div>
+                <div style={{ fontSize:12, fontWeight:700, letterSpacing:-0.2 }}>{t.title}</div>
+                <div style={{ color:C.muted, fontSize:10, marginTop:2, fontWeight:500 }}>{t.artist}</div>
               </div>
             ))}
           </div>
         </div>
-        <div style={{ padding:'16px 16px 0' }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+        <div style={{ padding:'18px 20px 0' }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
             <div style={B.title}>Top Podcasts</div>
-            <span onClick={() => setScreen('podcast')} style={{ color:C.gold, fontSize:12, cursor:'pointer' }}>See all</span>
+            <span onClick={() => setScreen('podcast')} style={{ color:C.gold, fontSize:12, cursor:'pointer', fontWeight:700, letterSpacing:0.2 }}>See all</span>
           </div>
           {PODCAST_SHOWS.map(s => (
-            <div key={s.id} onClick={() => setScreen('podcast')} style={{ ...B.card, padding:12, marginBottom:8, cursor:'pointer' }}>
-              <div style={{ fontWeight:700, fontSize:13 }}>{s.title}</div>
-              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>by {s.host} · {s.episodes} episodes</div>
+            <div key={s.id} onClick={() => setScreen('podcast')} style={{ ...B.card, padding:14, marginBottom:10, cursor:'pointer', transition:'all 0.2s ease' }}>
+              <div style={{ fontWeight:700, fontSize:14, letterSpacing:-0.2 }}>{s.title}</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:3, fontWeight:500 }}>by {s.host} · {s.episodes} episodes</div>
             </div>
           ))}
         </div>
@@ -353,39 +355,39 @@ const ArtistHomeScreen = ({ setScreen, setTrack }) => (
   <div style={B.screen}>
     <div style={{ ...B.top, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
       <div>
-        <div style={{ fontSize:13, color:C.muted }}>Good evening,</div>
-        <div style={{ fontSize:22, fontWeight:900 }}>Marcus Allen 👋</div>
+        <div style={{ fontSize:13, color:C.muted, fontWeight:600 }}>Good evening,</div>
+        <div style={{ fontSize:24, fontWeight:900, marginTop:2, letterSpacing:-0.5 }}>Marcus Allen 👋</div>
       </div>
-      <div style={{ display:'flex', gap:8 }}>
-        <button onClick={() => setScreen('upload')} style={{ ...B.goldBtn, padding:'8px 14px', fontSize:12 }}>+ Upload</button>
-        <button onClick={() => setScreen('notifications')} style={{ width:34, height:34, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.gold, cursor:'pointer' }}>🔔</button>
+      <div style={{ display:'flex', gap:10 }}>
+        <button onClick={() => setScreen('upload')} style={{ ...B.goldBtn, padding:'10px 18px', fontSize:12, fontWeight:900, letterSpacing:0.3 }}>+ Upload</button>
+        <button onClick={() => setScreen('notifications')} style={{ width:38, height:38, borderRadius:99, border:`1px solid ${C.line}`, background:C.card, color:C.gold, cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.3)', transition:'all 0.2s ease' }}>🔔</button>
       </div>
     </div>
     <div style={B.scroll}>
-      <div style={{ padding:'0 16px 14px' }}>
-        <div style={{ ...B.goldCard, padding:14 }}>
-          <div style={{ color:C.gold, fontSize:10, fontWeight:800, letterSpacing:1 }}>PERFORMANCE SCORE</div>
-          <div style={{ display:'flex', alignItems:'flex-end', gap:8, marginTop:4 }}>
-            <div style={{ fontSize:38, fontWeight:900, color:C.gold }}>87.4</div>
-            <div style={{ color:C.success, fontSize:12, marginBottom:6 }}>↑ +2.1 this week</div>
+      <div style={{ padding:'0 20px 16px' }}>
+        <div style={{ ...B.goldCard, padding:18 }}>
+          <div style={{ color:C.gold, fontSize:10, fontWeight:900, letterSpacing:1.5 }}>PERFORMANCE SCORE</div>
+          <div style={{ display:'flex', alignItems:'flex-end', gap:10, marginTop:6 }}>
+            <div style={{ fontSize:42, fontWeight:900, color:C.gold, letterSpacing:-1 }}>87.4</div>
+            <div style={{ color:C.success, fontSize:13, marginBottom:8, fontWeight:700 }}>↑ +2.1 this week</div>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:6, marginTop:10 }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:8, marginTop:14 }}>
             {[['48.2K','Streams'],['124K','Followers'],['$892','This Month'],['38','New Fans']].map(([v,l]) => (
-              <div key={l} style={{ background:'#0A0A0A', borderRadius:10, padding:8, textAlign:'center' }}>
-                <div style={{ fontWeight:900, fontSize:13 }}>{v}</div>
-                <div style={{ color:C.muted, fontSize:9, marginTop:1 }}>{l}</div>
+              <div key={l} style={{ background:'rgba(0,0,0,0.3)', borderRadius:12, padding:10, textAlign:'center', border:'1px solid rgba(212,165,116,0.1)' }}>
+                <div style={{ fontWeight:900, fontSize:14, letterSpacing:-0.3 }}>{v}</div>
+                <div style={{ color:C.muted, fontSize:9, marginTop:3, fontWeight:600, letterSpacing:0.3 }}>{l}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div style={{ padding:'0 16px 14px' }}>
-        <div style={{ ...B.card, padding:14, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+      <div style={{ padding:'0 20px 16px' }}>
+        <div style={{ ...B.card, padding:18, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
           <div>
-            <div style={{ color:C.muted, fontSize:11 }}>Available to Withdraw</div>
-            <div style={{ fontSize:28, fontWeight:900, color:C.gold }}>$1,840</div>
+            <div style={{ color:C.muted, fontSize:11, fontWeight:600, letterSpacing:0.3 }}>Available to Withdraw</div>
+            <div style={{ fontSize:32, fontWeight:900, color:C.gold, marginTop:4, letterSpacing:-1 }}>$1,840</div>
           </div>
-          <button onClick={() => setScreen('wallet')} style={B.goldBtn}>Withdraw</button>
+          <button onClick={() => setScreen('wallet')} style={{ ...B.goldBtn, padding:'12px 20px', fontSize:13 }}>Withdraw</button>
         </div>
       </div>
       <div style={{ padding:'0 16px 14px' }}>
