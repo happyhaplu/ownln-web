@@ -8,33 +8,37 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-    body { min-height: 100vh; background: radial-gradient(ellipse at top, #0F0A08 0%, #000000 60%); display: flex; justify-content: center; align-items: flex-start; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
-    #root { width: 390px; min-height: 100vh; background: linear-gradient(180deg, #08080A 0%, #000000 100%); color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid rgba(255,215,0,0.05); border-right: 1px solid rgba(255,215,0,0.05); box-shadow: 0 0 80px rgba(255,215,0,0.03); }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Inter+Tight:wght@800;900&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    body { min-height: 100vh; background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.03) 0%, #000000 40%), linear-gradient(180deg, #000000 0%, #000000 100%); display: flex; justify-content: center; align-items: flex-start; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    #root { width: 390px; min-height: 100vh; background: linear-gradient(180deg, rgba(15,10,5,0.4) 0%, #000000 100%); color: #FFFFFF; position: relative; overflow: hidden; border-left: 1px solid rgba(255,215,0,0.1); border-right: 1px solid rgba(255,215,0,0.1); box-shadow: 0 0 120px rgba(255,215,0,0.06), inset 0 0 200px rgba(255,215,0,0.01); }
     ::-webkit-scrollbar { width: 0; height: 0; }
-    @keyframes luxuryGlow { 0% { box-shadow: 0 0 20px rgba(255,215,0,0.15), 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05); } 50% { box-shadow: 0 0 40px rgba(255,215,0,0.25), 0 12px 48px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.08); } 100% { box-shadow: 0 0 20px rgba(255,215,0,0.15), 0 8px 32px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.05); } }
-    @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-    @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    @keyframes premiumGlow { 0% { box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 10px 40px rgba(0,0,0,0.7), 0 20px 60px rgba(255,215,0,0.05), inset 0 1px 2px rgba(255,255,255,0.08); } 50% { box-shadow: 0 0 50px rgba(255,215,0,0.35), 0 15px 60px rgba(0,0,0,0.8), 0 30px 80px rgba(255,215,0,0.1), inset 0 1px 2px rgba(255,255,255,0.12); } 100% { box-shadow: 0 0 30px rgba(255,215,0,0.2), 0 10px 40px rgba(0,0,0,0.7), 0 20px 60px rgba(255,215,0,0.05), inset 0 1px 2px rgba(255,255,255,0.08); } }
+    @keyframes shimmerFlow { 0% { background-position: -300% center; } 100% { background-position: 300% center; } }
+    @keyframes floatSoft { 0%, 100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-8px) scale(1.01); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.02); } }
+    @keyframes rotateGlow { 0% { filter: hue-rotate(0deg) drop-shadow(0 0 15px rgba(255,215,0,0.4)); } 100% { filter: hue-rotate(10deg) drop-shadow(0 0 20px rgba(255,215,0,0.5)); } }
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
 
-/* ── LUXURY DESIGN TOKENS ─────────────────────── */
+/* ── HYPERMODERN LUXURY TOKENS ─────────────────────── */
 const C = {
-  bg:'#000000', card:'#0F0F0F', card2:'#151515', card3:'#1A1A1A',
-  gold:'#FFD700', goldLight:'#FFED4E', goldDark:'#D4AF37', 
-  goldDim:'rgba(255,215,0,0.15)', goldBg:'rgba(255,215,0,0.03)',
-  goldGradient:'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)',
-  text:'#FFFFFF', textSoft:'#F5F5F5', muted:'#8A8A8A', mutedLight:'#A0A0A0',
-  line:'rgba(255,255,255,0.08)', lineBright:'rgba(255,215,0,0.12)',
+  bg:'#000000', card:'#0A0A0A', card2:'#121212', card3:'#1A1A1A', card4:'#0D0D0D',
+  gold:'#FFD700', goldLight:'#FFF4A3', goldDark:'#CC9900', goldBright:'#FFED4E',
+  goldDim:'rgba(255,215,0,0.12)', goldBg:'rgba(255,215,0,0.02)',
+  goldGradient:'linear-gradient(135deg, #FFF4A3 0%, #FFD700 30%, #FFA500 70%, #FF8C00 100%)',
+  goldGradient2:'linear-gradient(90deg, #FFD700 0%, #FFED4E 50%, #FFD700 100%)',
+  goldShimmer:'linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.3) 50%, transparent 100%)',
+  text:'#FFFFFF', textSoft:'#F8F8F8', textBright:'#FEFEFE',
+  muted:'#7A7A7A', mutedLight:'#9A9A9A', mutedDark:'#5A5A5A',
+  line:'rgba(255,255,255,0.06)', lineBright:'rgba(255,215,0,0.15)', lineDim:'rgba(255,255,255,0.03)',
   success:'#10B981', danger:'#EF4444', blue:'#3B82F6', purple:'#8B5CF6',
-  shadow:'rgba(0,0,0,0.5)', shadowHeavy:'rgba(0,0,0,0.8)',
+  shadow:'rgba(0,0,0,0.6)', shadowHeavy:'rgba(0,0,0,0.9)', shadowSoft:'rgba(0,0,0,0.3)',
 };
 
 /* ── SAMPLE DATA ───────────────────────── */
@@ -67,29 +71,29 @@ const TXS = [
   { id:6, title:'Payout sent',       amount:'-$750.00', date:'May 1',  type:'out', source:'payout' },
 ];
 
-/* ── LUXURY BASE STYLES ───────────────────────── */
+/* ── HYPERMODERN LUXURY STYLES ─────────────────────── */
 const B = {
-  screen:{ minHeight:'100vh', background:`radial-gradient(ellipse at top, ${C.card} 0%, ${C.bg} 50%)`, color:C.text, display:'flex', flexDirection:'column', animation:'fadeIn .35s cubic-bezier(0.4, 0, 0.2, 1)' },
+  screen:{ minHeight:'100vh', background:`radial-gradient(circle at 50% 0%, rgba(255,215,0,0.02) 0%, ${C.bg} 40%)`, color:C.text, display:'flex', flexDirection:'column', animation:'fadeInUp .4s cubic-bezier(0.16, 1, 0.3, 1)' },
   scroll:{ flex:1, overflowY:'auto', paddingBottom:'150px' },
-  card:{ background:`linear-gradient(145deg, ${C.card} 0%, ${C.card2} 100%)`, border:`1px solid ${C.line}`, borderRadius:20, boxShadow:`0 4px 24px ${C.shadow}, inset 0 1px 0 rgba(255,255,255,0.03)` },
-  cardPremium:{ background:`linear-gradient(145deg, ${C.card2} 0%, ${C.card} 100%)`, border:`1px solid ${C.lineBright}`, borderRadius:20, boxShadow:`0 8px 32px ${C.shadow}, 0 0 60px rgba(255,215,0,0.05), inset 0 1px 0 rgba(255,215,0,0.08)` },
-  goldCard:{ background:`linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,165,0,0.05) 50%, ${C.card2} 100%)`, border:`1px solid rgba(255,215,0,0.2)`, borderRadius:20, boxShadow:`0 8px 40px rgba(255,215,0,0.15), inset 0 1px 0 rgba(255,215,0,0.1)` },
-  title:{ fontSize:20, fontWeight:900, marginBottom:14, letterSpacing:-0.5, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' },
-  goldBtn:{ background:C.goldGradient, color:'#000000', border:'none', borderRadius:32, padding:'16px 28px', fontWeight:900, cursor:'pointer', fontSize:14, boxShadow:'0 6px 24px rgba(255,215,0,0.35), inset 0 1px 1px rgba(255,255,255,0.2)', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', letterSpacing:0.5, textTransform:'uppercase' },
-  outlineBtn:{ background:'rgba(255,215,0,0.05)', color:C.gold, border:`2px solid ${C.gold}`, borderRadius:32, padding:'14px 24px', fontWeight:800, cursor:'pointer', fontSize:13, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', backdropFilter:'blur(20px)', boxShadow:'0 4px 16px rgba(255,215,0,0.1)', letterSpacing:0.5 },
-  ghostBtn:{ background:'rgba(255,255,255,0.02)', color:C.mutedLight, border:`1px solid ${C.line}`, borderRadius:28, padding:'12px 20px', fontWeight:600, cursor:'pointer', fontSize:12, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', backdropFilter:'blur(10px)' },
-  input:{ width:'100%', background:'rgba(255,255,255,0.02)', color:C.text, border:`1px solid ${C.line}`, borderRadius:16, padding:'16px 18px', outline:'none', fontSize:14, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontWeight:500, boxShadow:'inset 0 2px 8px rgba(0,0,0,0.3)' },
-  top:{ padding:'56px 20px 18px' },
-  pill:{ borderRadius:99, padding:'8px 18px', fontSize:11, fontWeight:700, cursor:'pointer', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', letterSpacing:0.5, textTransform:'uppercase' },
+  card:{ background:`linear-gradient(155deg, ${C.card2} 0%, ${C.card} 60%, ${C.card4} 100%)`, border:`1px solid ${C.line}`, borderRadius:24, boxShadow:`0 8px 32px ${C.shadowHeavy}, 0 2px 8px ${C.shadowSoft}, inset 0 1px 0 rgba(255,255,255,0.04)` },
+  cardPremium:{ background:`linear-gradient(155deg, ${C.card3} 0%, ${C.card2} 50%, ${C.card} 100%)`, border:`1px solid ${C.lineBright}`, borderRadius:24, boxShadow:`0 12px 48px ${C.shadowHeavy}, 0 0 80px rgba(255,215,0,0.08), inset 0 1px 1px rgba(255,215,0,0.1), inset 0 -1px 1px rgba(0,0,0,0.5)` },
+  goldCard:{ background:`linear-gradient(155deg, rgba(255,244,163,0.08) 0%, rgba(255,215,0,0.06) 30%, rgba(255,165,0,0.04) 70%, ${C.card2} 100%)`, border:`1.5px solid rgba(255,215,0,0.25)`, borderRadius:24, boxShadow:`0 12px 56px rgba(255,215,0,0.2), 0 0 100px rgba(255,215,0,0.1), inset 0 2px 1px rgba(255,215,0,0.15), inset 0 -2px 1px rgba(0,0,0,0.4)` },
+  title:{ fontSize:22, fontWeight:900, marginBottom:16, letterSpacing:-0.8, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', fontFamily:'Inter Tight, Inter, sans-serif', textShadow:'0 0 30px rgba(255,215,0,0.2)' },
+  goldBtn:{ background:C.goldGradient, color:'#000000', border:'none', borderRadius:40, padding:'18px 32px', fontWeight:900, cursor:'pointer', fontSize:13, boxShadow:'0 8px 32px rgba(255,215,0,0.4), 0 4px 16px rgba(255,140,0,0.3), inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 2px rgba(204,153,0,0.5)', transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', letterSpacing:1, textTransform:'uppercase', position:'relative', overflow:'hidden' },
+  outlineBtn:{ background:'rgba(255,215,0,0.04)', color:C.gold, border:`2px solid ${C.gold}`, borderRadius:40, padding:'16px 28px', fontWeight:800, cursor:'pointer', fontSize:12, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter:'blur(30px)', boxShadow:'0 6px 24px rgba(255,215,0,0.15), inset 0 1px 0 rgba(255,215,0,0.1)', letterSpacing:0.8, textTransform:'uppercase' },
+  ghostBtn:{ background:'rgba(255,255,255,0.015)', color:C.mutedLight, border:`1px solid ${C.lineDim}`, borderRadius:32, padding:'14px 24px', fontWeight:600, cursor:'pointer', fontSize:12, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', backdropFilter:'blur(20px)', boxShadow:`0 4px 16px ${C.shadowSoft}` },
+  input:{ width:'100%', background:'rgba(255,255,255,0.015)', color:C.text, border:`1px solid ${C.line}`, borderRadius:18, padding:'18px 20px', outline:'none', fontSize:14, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', fontWeight:500, boxShadow:`inset 0 4px 12px ${C.shadowSoft}, 0 2px 8px ${C.shadowSoft}` },
+  top:{ padding:'60px 20px 20px' },
+  pill:{ borderRadius:99, padding:'10px 20px', fontSize:10, fontWeight:800, cursor:'pointer', transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', letterSpacing:0.8, textTransform:'uppercase' },
 };
 
 /* ── SHARED COMPONENTS ─────────────────── */
 const Header = ({ title, subtitle, onBack, right }) => (
-  <div style={{ ...B.top, display:'flex', alignItems:'center', gap:14 }}>
-    {onBack && <button onClick={onBack} style={{ width:42, height:42, borderRadius:99, border:`1px solid ${C.lineBright}`, background:`linear-gradient(145deg, ${C.card2}, ${C.card})`, color:C.gold, cursor:'pointer', flexShrink:0, boxShadow:`0 4px 16px ${C.shadow}, inset 0 1px 0 rgba(255,255,255,0.05)`, fontSize:18, display:'grid', placeItems:'center', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', fontWeight:700 }}>←</button>}
+  <div style={{ ...B.top, display:'flex', alignItems:'center', gap:16 }}>
+    {onBack && <button onClick={onBack} style={{ width:46, height:46, borderRadius:99, border:`1.5px solid ${C.lineBright}`, background:`linear-gradient(155deg, ${C.card3}, ${C.card2})`, color:C.goldBright, cursor:'pointer', flexShrink:0, boxShadow:`0 6px 24px ${C.shadowHeavy}, 0 0 30px rgba(255,215,0,0.1), inset 0 1px 0 rgba(255,215,0,0.12)`, fontSize:20, display:'grid', placeItems:'center', transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', fontWeight:900, filter:'drop-shadow(0 0 8px rgba(255,215,0,0.2))' }}>←</button>}
     <div style={{ flex:1 }}>
-      <div style={{ fontSize:24, fontWeight:900, letterSpacing:-0.8, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', filter:'drop-shadow(0 0 12px rgba(255,215,0,0.3))' }}>{title}</div>
-      {subtitle && <div style={{ color:C.mutedLight, fontSize:12, marginTop:3, fontWeight:500, letterSpacing:0.3 }}>{subtitle}</div>}
+      <div style={{ fontSize:26, fontWeight:900, letterSpacing:-1.2, fontFamily:'Inter Tight, Inter, sans-serif', background:`linear-gradient(135deg, ${C.goldBright} 0%, ${C.gold} 50%, ${C.goldDark} 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', filter:'drop-shadow(0 0 20px rgba(255,215,0,0.4))' }}>{title}</div>
+      {subtitle && <div style={{ color:C.mutedLight, fontSize:12, marginTop:4, fontWeight:500, letterSpacing:0.5, opacity:0.9 }}>{subtitle}</div>}
     </div>
     {right}
   </div>
@@ -102,22 +106,25 @@ const StatusBar = () => (
 );
 
 const Tag = ({ label, active, onClick }) => (
-  <span onClick={onClick} style={{ ...B.pill, background: active ? C.goldGradient : 'rgba(255,255,255,0.02)', color: active ? '#000000' : C.mutedLight, border: active ? `1px solid rgba(255,215,0,0.3)` : `1px solid ${C.line}`, display:'inline-block', boxShadow: active ? '0 4px 20px rgba(255,215,0,0.35), inset 0 1px 1px rgba(255,255,255,0.2)' : `0 2px 8px ${C.shadow}`, fontWeight: active ? 900 : 600, backdropFilter:'blur(10px)' }}>{label}</span>
+  <span onClick={onClick} style={{ ...B.pill, background: active ? C.goldGradient : 'rgba(255,255,255,0.01)', color: active ? '#000000' : C.mutedLight, border: active ? `1.5px solid rgba(255,215,0,0.4)` : `1px solid ${C.lineDim}`, display:'inline-block', boxShadow: active ? '0 6px 28px rgba(255,215,0,0.45), 0 2px 8px rgba(255,140,0,0.3), inset 0 2px 2px rgba(255,255,255,0.3)' : `0 3px 12px ${C.shadowSoft}`, fontWeight: active ? 900 : 700, backdropFilter:'blur(20px)', position:'relative', overflow:'hidden', animation: active ? 'floatSoft 3s ease-in-out infinite' : 'none' }}>
+    {active && <span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 3s linear infinite', opacity:0.5 }}></span>}
+    <span style={{ position:'relative', zIndex:1 }}>{label}</span>
+  </span>
 );
 
 const TrackRow = ({ track, onPlay, showLike }) => {
   const [liked, setLiked] = React.useState(false);
   const [hover, setHover] = React.useState(false);
   return (
-    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ ...B.cardPremium, padding:'14px 16px', marginBottom:12, display:'flex', alignItems:'center', gap:14, cursor:'pointer', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', transform: hover ? 'translateY(-2px)' : 'translateY(0)', boxShadow: hover ? `0 12px 40px ${C.shadow}, 0 0 40px rgba(255,215,0,0.1)` : B.cardPremium.boxShadow }} onClick={onPlay}>
-      <div style={{ width:54, height:54, borderRadius:14, background:`linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,140,0,0.1) 100%)`, display:'grid', placeItems:'center', flexShrink:0, color:C.gold, fontSize:18, boxShadow:`inset 0 2px 4px rgba(255,215,0,0.15), 0 4px 12px ${C.shadow}`, border:`1px solid rgba(255,215,0,0.1)` }}>▶</div>
+    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ ...B.cardPremium, padding:'16px 18px', marginBottom:14, display:'flex', alignItems:'center', gap:16, cursor:'pointer', transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transform: hover ? 'translateY(-3px) scale(1.01)' : 'translateY(0) scale(1)', boxShadow: hover ? `0 16px 56px ${C.shadowHeavy}, 0 0 60px rgba(255,215,0,0.15), inset 0 1px 1px rgba(255,215,0,0.15)` : B.cardPremium.boxShadow, border: hover ? `1px solid ${C.lineBright}` : B.cardPremium.border }} onClick={onPlay}>
+      <div style={{ width:58, height:58, borderRadius:16, background:`linear-gradient(155deg, rgba(255,244,163,0.2) 0%, rgba(255,215,0,0.15) 50%, rgba(255,140,0,0.1) 100%)`, display:'grid', placeItems:'center', flexShrink:0, color:C.goldBright, fontSize:20, boxShadow:`inset 0 3px 6px rgba(255,215,0,0.2), 0 6px 20px ${C.shadowSoft}, 0 0 30px rgba(255,215,0,0.1)`, border:`1.5px solid rgba(255,215,0,0.15)`, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transform: hover ? 'scale(1.08)' : 'scale(1)', filter: hover ? 'drop-shadow(0 0 12px rgba(255,215,0,0.4))' : 'none' }}>▶</div>
       <div style={{ flex:1, minWidth:0 }}>
-        <div style={{ fontSize:15, fontWeight:800, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.3, color:C.textSoft }}>{track.title}</div>
-        <div style={{ color:C.mutedLight, fontSize:11, marginTop:4, fontWeight:500, letterSpacing:0.2 }}>{track.artist} · {track.plays} plays</div>
+        <div style={{ fontSize:15, fontWeight:800, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.4, color:C.textBright, fontFamily:'Inter Tight, Inter, sans-serif' }}>{track.title}</div>
+        <div style={{ color:C.mutedLight, fontSize:11, marginTop:5, fontWeight:500, letterSpacing:0.3, opacity:0.85 }}>{track.artist} · {track.plays} plays</div>
       </div>
-      <div style={{ display:'flex', gap:12, alignItems:'center', flexShrink:0 }}>
-        {showLike && <span onClick={e=>{ e.stopPropagation(); setLiked(!liked); }} style={{ fontSize:19, cursor:'pointer', color: liked ? C.gold : C.mutedLight, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', transform: liked ? 'scale(1.1)' : 'scale(1)', filter: liked ? 'drop-shadow(0 0 8px rgba(255,215,0,0.6))' : 'none' }}>{liked ? '♥' : '♡'}</span>}
-        <span style={{ color:C.mutedLight, fontSize:11, fontWeight:700, letterSpacing:0.5 }}>{track.duration}</span>
+      <div style={{ display:'flex', gap:14, alignItems:'center', flexShrink:0 }}>
+        {showLike && <span onClick={e=>{ e.stopPropagation(); setLiked(!liked); }} style={{ fontSize:20, cursor:'pointer', color: liked ? C.gold : C.mutedLight, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transform: liked ? 'scale(1.2)' : 'scale(1)', filter: liked ? 'drop-shadow(0 0 12px rgba(255,215,0,0.7))' : 'none', animation: liked ? 'pulse 2s ease-in-out infinite' : 'none' }}>{liked ? '♥' : '♡'}</span>}
+        <span style={{ color:C.mutedLight, fontSize:11, fontWeight:800, letterSpacing:0.8, opacity:0.7 }}>{track.duration}</span>
       </div>
     </div>
   );
@@ -128,11 +135,11 @@ const BottomNav = ({ screen, setScreen, role }) => {
     ? [{ id:'home', icon:'⌂', label:'Home' },{ id:'search', icon:'⌕', label:'Discover' },{ id:'library', icon:'▤', label:'Studio' },{ id:'community', icon:'◎', label:'Community' },{ id:'artist', icon:'◉', label:'Profile' }]
     : [{ id:'home', icon:'⌂', label:'Home' },{ id:'search', icon:'⌕', label:'Discover' },{ id:'library', icon:'▤', label:'Library' },{ id:'community', icon:'◎', label:'Community' },{ id:'fanprofile', icon:'◉', label:'Me' }];
   return (
-    <div style={{ position:'fixed', bottom:0, width:390, background:'rgba(10,10,10,0.98)', backdropFilter:'blur(40px)', borderTop:`1px solid ${C.lineBright}`, padding:'12px 0 20px', display:'flex', justifyContent:'space-around', zIndex:20, boxShadow:`0 -8px 32px ${C.shadowHeavy}, 0 0 60px rgba(255,215,0,0.05)` }}>
+    <div style={{ position:'fixed', bottom:0, width:390, background:'rgba(5,5,5,0.98)', backdropFilter:'blur(50px)', borderTop:`1.5px solid ${C.lineBright}`, padding:'14px 0 22px', display:'flex', justifyContent:'space-around', zIndex:20, boxShadow:`0 -12px 48px ${C.shadowHeavy}, 0 -4px 20px rgba(255,215,0,0.08), inset 0 1px 0 rgba(255,215,0,0.08)` }}>
       {tabs.map(t => {
         const active = t.id === screen;
-        return <div key={t.id} onClick={() => setScreen(t.id)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, color:active ? C.gold : C.mutedLight, fontSize:10, fontWeight:active ? 900 : 600, cursor:'pointer', transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', transform: active ? 'scale(1.05)' : 'scale(1)', filter: active ? 'drop-shadow(0 0 12px rgba(255,215,0,0.4))' : 'none', letterSpacing:0.5, textTransform:'uppercase' }}>
-          <span style={{ fontSize:22, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>{t.icon}</span><span>{t.label}</span>
+        return <div key={t.id} onClick={() => setScreen(t.id)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:6, color:active ? C.goldBright : C.mutedLight, fontSize:9, fontWeight:active ? 900 : 700, cursor:'pointer', transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', transform: active ? 'translateY(-2px) scale(1.08)' : 'scale(1)', filter: active ? 'drop-shadow(0 0 16px rgba(255,215,0,0.5))' : 'none', letterSpacing:0.8, textTransform:'uppercase' }}>
+          <span style={{ fontSize:24, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', animation: active ? 'pulse 2.5s ease-in-out infinite' : 'none' }}>{t.icon}</span><span style={{ fontWeight: active ? 900 : 600 }}>{t.label}</span>
         </div>;
       })}
     </div>
@@ -143,20 +150,20 @@ const PersistentPlayer = ({ track, playing, setPlaying, setScreen, panel, setPan
   if (!track) return null;
   return (
     <>
-      <div style={{ position:'fixed', bottom:78, width:390, background:'rgba(15,15,15,0.98)', backdropFilter:'blur(40px)', borderTop:`1px solid ${C.lineBright}`, borderBottom:`1px solid ${C.lineBright}`, zIndex:25, padding:'12px 14px', boxShadow:`0 -4px 32px ${C.shadowHeavy}, 0 0 60px rgba(255,215,0,0.08)` }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-          <div onClick={() => setScreen('player')} style={{ width:48, height:48, borderRadius:12, background:`linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,140,0,0.15) 100%)`, display:'grid', placeItems:'center', color:C.gold, cursor:'pointer', boxShadow:`0 4px 16px rgba(255,215,0,0.2), inset 0 1px 1px rgba(255,255,255,0.1)`, fontSize:16, border:`1px solid rgba(255,215,0,0.15)`, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>▶</div>
+      <div style={{ position:'fixed', bottom:84, width:390, background:'rgba(8,8,8,0.98)', backdropFilter:'blur(50px)', borderTop:`1.5px solid ${C.lineBright}`, borderBottom:`1.5px solid ${C.lineBright}`, zIndex:25, padding:'14px 16px', boxShadow:`0 -6px 40px ${C.shadowHeavy}, 0 0 80px rgba(255,215,0,0.1), inset 0 1px 0 rgba(255,215,0,0.1)` }}>
+        <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+          <div onClick={() => setScreen('player')} style={{ width:52, height:52, borderRadius:14, background:`linear-gradient(155deg, rgba(255,244,163,0.25) 0%, rgba(255,215,0,0.18) 50%, rgba(255,140,0,0.12) 100%)`, display:'grid', placeItems:'center', color:C.goldBright, cursor:'pointer', boxShadow:`0 6px 24px rgba(255,215,0,0.25), inset 0 2px 2px rgba(255,255,255,0.15), 0 0 40px rgba(255,215,0,0.15)`, fontSize:18, border:`1.5px solid rgba(255,215,0,0.2)`, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', filter:'drop-shadow(0 0 10px rgba(255,215,0,0.3))' }}>▶</div>
           <div onClick={() => setScreen('player')} style={{ flex:1, minWidth:0, cursor:'pointer' }}>
-            <div style={{ fontSize:14, fontWeight:800, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.3, color:C.textSoft }}>{track.title}</div>
-            <div style={{ color:C.mutedLight, fontSize:11, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', marginTop:2, fontWeight:500, letterSpacing:0.2 }}>{track.artist}</div>
+            <div style={{ fontSize:14, fontWeight:800, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', letterSpacing:-0.4, color:C.textBright, fontFamily:'Inter Tight, Inter, sans-serif' }}>{track.title}</div>
+            <div style={{ color:C.mutedLight, fontSize:11, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', marginTop:3, fontWeight:500, letterSpacing:0.3, opacity:0.85 }}>{track.artist}</div>
           </div>
-          <div style={{ display:'flex', gap:14, alignItems:'center' }}>
-            <button onClick={() => setPanel('queue')} style={{ background:'transparent', border:'none', color:C.mutedLight, cursor:'pointer', fontSize:18, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>☰</button>
-            <button onClick={() => setPlaying(!playing)} style={{ background:'transparent', border:'none', color:C.gold, cursor:'pointer', fontSize:22, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', filter:'drop-shadow(0 0 8px rgba(255,215,0,0.4))' }}>{playing ? '⏸' : '▶'}</button>
-            <button onClick={() => setPanel('lyrics')} style={{ background:'transparent', border:'none', color:C.mutedLight, cursor:'pointer', fontSize:18, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>♫</button>
+          <div style={{ display:'flex', gap:16, alignItems:'center' }}>
+            <button onClick={() => setPanel('queue')} style={{ background:'transparent', border:'none', color:C.mutedLight, cursor:'pointer', fontSize:19, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', opacity:0.7 }}>☰</button>
+            <button onClick={() => setPlaying(!playing)} style={{ background:'transparent', border:'none', color:C.goldBright, cursor:'pointer', fontSize:24, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', filter:'drop-shadow(0 0 12px rgba(255,215,0,0.5))', animation: playing ? 'pulse 2s ease-in-out infinite' : 'none' }}>{playing ? '⏸' : '▶'}</button>
+            <button onClick={() => setPanel('lyrics')} style={{ background:'transparent', border:'none', color:C.mutedLight, cursor:'pointer', fontSize:19, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', opacity:0.7 }}>♫</button>
           </div>
         </div>
-        <div style={{ marginTop:10, height:4, borderRadius:6, background:'rgba(255,255,255,0.05)', overflow:'hidden' }}><div style={{ width:'38%', height:'100%', background:C.goldGradient, borderRadius:6, boxShadow:'0 0 12px rgba(255,215,0,0.5)' }}></div></div>
+        <div style={{ marginTop:12, height:5, borderRadius:8, background:'rgba(255,255,255,0.03)', overflow:'hidden', boxShadow:`inset 0 2px 6px ${C.shadowSoft}` }}><div style={{ width:'38%', height:'100%', background:C.goldGradient, borderRadius:8, boxShadow:'0 0 16px rgba(255,215,0,0.6)', position:'relative', overflow:'hidden' }}><span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 3s linear infinite', opacity:0.4 }}></span></div></div>
       </div>
 
       {panel && (
@@ -294,10 +301,10 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
   return (
     <div style={B.screen}>
       <div style={{ ...B.top, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <div style={{ fontSize:32, fontWeight:900, letterSpacing:-1, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', filter:'drop-shadow(0 0 16px rgba(255,215,0,0.3))' }}>OWNLN</div>
-        <div style={{ display:'flex', gap:12 }}>
-          <button onClick={() => setScreen('fansaved')} style={{ width:42, height:42, borderRadius:99, border:`1px solid ${C.lineBright}`, background:`linear-gradient(145deg, ${C.card2}, ${C.card})`, color:C.gold, cursor:'pointer', fontSize:18, boxShadow:`0 4px 16px ${C.shadow}, inset 0 1px 0 rgba(255,255,255,0.05)`, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>♡</button>
-          <button onClick={() => setScreen('notifications')} style={{ width:42, height:42, borderRadius:99, border:`1px solid ${C.lineBright}`, background:`linear-gradient(145deg, ${C.card2}, ${C.card})`, color:C.gold, cursor:'pointer', boxShadow:`0 4px 16px ${C.shadow}, inset 0 1px 0 rgba(255,255,255,0.05)`, transition:'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', filter:'drop-shadow(0 0 8px rgba(255,215,0,0.2))' }}>🔔</button>
+        <div style={{ fontSize:36, fontWeight:900, letterSpacing:-1.5, fontFamily:'Inter Tight, Inter, sans-serif', background:`linear-gradient(135deg, ${C.goldBright} 0%, ${C.gold} 50%, ${C.goldDark} 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', filter:'drop-shadow(0 0 24px rgba(255,215,0,0.4))', animation:'floatSoft 4s ease-in-out infinite' }}>OWNLN</div>
+        <div style={{ display:'flex', gap:14 }}>
+          <button onClick={() => setScreen('fansaved')} style={{ width:46, height:46, borderRadius:99, border:`1.5px solid ${C.lineBright}`, background:`linear-gradient(155deg, ${C.card3}, ${C.card2})`, color:C.goldBright, cursor:'pointer', fontSize:20, boxShadow:`0 6px 24px ${C.shadowHeavy}, 0 0 40px rgba(255,215,0,0.08), inset 0 1px 0 rgba(255,215,0,0.1)`, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', filter:'drop-shadow(0 0 8px rgba(255,215,0,0.15))' }}>♡</button>
+          <button onClick={() => setScreen('notifications')} style={{ width:46, height:46, borderRadius:99, border:`1.5px solid ${C.lineBright}`, background:`linear-gradient(155deg, ${C.card3}, ${C.card2})`, color:C.goldBright, cursor:'pointer', boxShadow:`0 6px 24px ${C.shadowHeavy}, 0 0 40px rgba(255,215,0,0.08), inset 0 1px 0 rgba(255,215,0,0.1)`, transition:'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)', filter:'drop-shadow(0 0 10px rgba(255,215,0,0.2))', animation:'pulse 3s ease-in-out infinite', fontSize:18 }}>🔔</button>
         </div>
       </div>
       <div style={B.scroll}>
@@ -306,14 +313,19 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
             {MOODS.map(m => <Tag key={m} label={m} active={activeMood===m} onClick={() => setActiveMood(m)} />)}
           </div>
         </div>
-        <div style={{ padding:'0 20px 20px' }}>
-          <div style={{ ...B.goldCard, padding:26, border:`1px solid rgba(255,215,0,0.25)`, boxShadow:`0 12px 48px rgba(255,215,0,0.2), inset 0 1px 0 rgba(255,215,0,0.15)` }}>
-            <div style={{ color:C.gold, fontSize:10, fontWeight:900, letterSpacing:2, textTransform:'uppercase', filter:'drop-shadow(0 0 8px rgba(255,215,0,0.4))' }}>🔥 Trending Now</div>
-            <div style={{ fontSize:28, fontWeight:900, marginTop:8, letterSpacing:-1, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Midnight Gold</div>
-            <div style={{ color:C.mutedLight, fontSize:14, marginTop:4, fontWeight:500, letterSpacing:0.2 }}>Marcus Allen · 2.4M plays</div>
-            <div style={{ display:'flex', gap:12, marginTop:20 }}>
-              <button onClick={() => { setTrack(TRACKS[0]); setScreen('player'); }} style={{ ...B.goldBtn, flex:1, padding:'14px 0', animation:'luxuryGlow 3s ease-in-out infinite', fontSize:13 }}>▶ PLAY NOW</button>
-              <button onClick={() => setScreen('subscribe')} style={{ ...B.outlineBtn, flex:1, padding:'14px 0', fontSize:13 }}>SUBSCRIBE</button>
+        <div style={{ padding:'0 20px 22px' }}>
+          <div style={{ ...B.goldCard, padding:30, border:`2px solid rgba(255,215,0,0.3)`, boxShadow:`0 16px 64px rgba(255,215,0,0.25), 0 0 120px rgba(255,215,0,0.12), inset 0 2px 1px rgba(255,215,0,0.2), inset 0 -2px 1px rgba(0,0,0,0.5)`, position:'relative', overflow:'hidden', animation:'premiumGlow 4s ease-in-out infinite' }}>
+            <span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 4s linear infinite', opacity:0.15, pointerEvents:'none' }}></span>
+            <div style={{ position:'relative', zIndex:1 }}>
+              <div style={{ color:C.goldBright, fontSize:10, fontWeight:900, letterSpacing:2.5, textTransform:'uppercase', filter:'drop-shadow(0 0 12px rgba(255,215,0,0.5))' }}>🔥 Trending Now</div>
+              <div style={{ fontSize:30, fontWeight:900, marginTop:10, letterSpacing:-1.5, fontFamily:'Inter Tight, Inter, sans-serif', background:`linear-gradient(135deg, ${C.goldBright} 0%, ${C.gold} 50%, ${C.goldDark} 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Midnight Gold</div>
+              <div style={{ color:C.mutedLight, fontSize:14, marginTop:5, fontWeight:500, letterSpacing:0.3, opacity:0.9 }}>Marcus Allen · 2.4M plays</div>
+              <div style={{ display:'flex', gap:14, marginTop:22 }}>
+                <button onClick={() => { setTrack(TRACKS[0]); setScreen('player'); }} style={{ ...B.goldBtn, flex:1, padding:'16px 0', animation:'premiumGlow 4s ease-in-out infinite', fontSize:12, fontWeight:900, position:'relative', overflow:'hidden' }}>
+                  <span style={{ position:'relative', zIndex:1 }}>▶ PLAY NOW</span>
+                </button>
+                <button onClick={() => setScreen('subscribe')} style={{ ...B.outlineBtn, flex:1, padding:'16px 0', fontSize:12 }}>SUBSCRIBE</button>
+              </div>
             </div>
           </div>
         </div>
