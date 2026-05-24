@@ -288,7 +288,16 @@ const AuthScreen = ({ onDone }) => {
           </div>
           <button style={{ ...B.ghostBtn, width:'100%', padding:'14px 0', fontSize:13, fontWeight:700 }}>🔵 Continue with Google</button>
         </div>
-        <div style={{ marginTop:18, textAlign:'center', color:C.mutedLight, fontSize:10, fontWeight:500, lineHeight:1.6, letterSpacing:0.3 }}>By continuing you agree to our Terms of Service & Privacy Policy</div>
+        {/* Trust badges */}
+        <div style={{ display:'flex', justifyContent:'center', gap:16, marginTop:16, flexWrap:'wrap' }}>
+          {['🔒 No ID to start','💰 Creators keep 80–90%','0 hidden fees'].map(t => (
+            <div key={t} style={{ display:'flex', alignItems:'center', gap:5 }}>
+              <span style={{ color:C.mutedLight, fontSize:10, fontWeight:600 }}>{t}</span>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => {}} style={{ ...B.ghostBtn, width:'100%', marginTop:12, padding:'12px', fontSize:12, color:C.mutedLight, border:`1px solid ${C.line}` }}>👀 Browse First — No Account Needed</button>
+        <div style={{ marginTop:12, textAlign:'center', color:C.mutedLight, fontSize:10, fontWeight:500, lineHeight:1.6, letterSpacing:0.3 }}>By continuing you agree to our Terms of Service & Privacy Policy</div>
       </div>
     </div>
   );
@@ -309,15 +318,31 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
         </div>
       </div>
       <div style={B.scroll}>
+        {/* Listening Streak */}
+        <div style={{ padding:'0 20px 14px' }}>
+          <div style={{ ...B.card, padding:'12px 16px', display:'flex', alignItems:'center', gap:12, border:`1.5px solid rgba(255,140,0,0.2)`, background:'rgba(255,100,0,0.04)' }}>
+            <span style={{ fontSize:24, filter:'drop-shadow(0 0 8px rgba(255,100,0,0.5))' }}>🔥</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:13, fontWeight:800, letterSpacing:-0.2 }}>7-Day Listening Streak</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>Keep it going — listen today to reach 8!</div>
+            </div>
+            <div style={{ color:'#FF6B2B', fontWeight:900, fontSize:18 }}>7</div>
+          </div>
+        </div>
+
+        {/* Mood filters */}
         <div style={{ padding:'0 20px 18px' }}>
           <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:8, WebkitOverflowScrolling:'touch', scrollbarWidth:'none', msOverflowStyle:'none' }}>
             <style>{'div::-webkit-scrollbar { display: none; }'}</style>
             {MOODS.map(m => <Tag key={m} label={m} active={activeMood===m} onClick={() => setActiveMood(m)} />)}
           </div>
         </div>
+
+        {/* Trending Hero */}
         <div style={{ padding:'0 20px 24px' }}>
           <div style={{ ...B.goldCard, padding:32, border:`2px solid rgba(255,215,0,0.3)`, boxShadow:`0 16px 64px rgba(255,215,0,0.25), 0 0 120px rgba(255,215,0,0.12), inset 0 2px 1px rgba(255,215,0,0.2), inset 0 -2px 1px rgba(0,0,0,0.5)`, position:'relative', overflow:'hidden', animation:'premiumGlow 4s ease-in-out infinite', minHeight:180 }}>
             <span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 4s linear infinite', opacity:0.15, pointerEvents:'none' }}></span>
+            <div style={{ position:'absolute', top:14, right:14, background:C.goldGradient, color:'#000', fontSize:8, fontWeight:900, padding:'4px 10px', borderRadius:20, letterSpacing:1 }}>OWNLN EXCLUSIVE</div>
             <div style={{ position:'relative', zIndex:1 }}>
               <div style={{ color:C.goldBright, fontSize:10, fontWeight:900, letterSpacing:2.5, textTransform:'uppercase', filter:'drop-shadow(0 0 12px rgba(255,215,0,0.5))', lineHeight:1.3, marginBottom:8 }}>🔥 Trending Now</div>
               <div style={{ fontSize:28, fontWeight:900, marginTop:8, letterSpacing:-1.2, fontFamily:'Inter Tight, Inter, sans-serif', background:`linear-gradient(135deg, ${C.goldBright} 0%, ${C.gold} 50%, ${C.goldDark} 100%)`, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', lineHeight:1.2, marginBottom:6 }}>Midnight Gold</div>
@@ -331,21 +356,79 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
             </div>
           </div>
         </div>
+
+        {/* Discovery Collections */}
+        <div style={{ padding:'0 20px 20px' }}>
+          <div style={B.title}>Discovery Collections</div>
+          <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:8 }}>
+            {[
+              { label:'🌙 Late Night Vibes',    count:'24 tracks', color:'rgba(60,40,120,0.5)',  border:'rgba(130,80,255,0.3)' },
+              { label:'💪 Workout Energy',       count:'18 tracks', color:'rgba(200,30,30,0.3)',  border:'rgba(255,60,60,0.3)' },
+              { label:'🧘 Focus Mode',           count:'31 tracks', color:'rgba(20,80,120,0.4)',  border:'rgba(60,160,255,0.3)' },
+              { label:'🎉 Feel Good Friday',     count:'22 tracks', color:'rgba(60,100,20,0.4)',  border:'rgba(80,200,60,0.3)' },
+              { label:'💔 Heartbreak Hours',     count:'16 tracks', color:'rgba(120,20,60,0.4)',  border:'rgba(255,80,120,0.3)' },
+            ].map(col => (
+              <div key={col.label} onClick={() => { setActiveMood('Chill'); }} style={{ minWidth:150, background:col.color, border:`1.5px solid ${col.border}`, borderRadius:20, padding:'16px 14px', cursor:'pointer', flexShrink:0, transition:'all 0.3s' }}>
+                <div style={{ fontSize:14, fontWeight:800, marginBottom:4, fontFamily:'Inter Tight, Inter, sans-serif' }}>{col.label}</div>
+                <div style={{ color:C.muted, fontSize:10, fontWeight:600 }}>{col.count}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Regional Scene */}
+        <div style={{ padding:'0 20px 20px' }}>
+          <div style={{ ...B.card, padding:18, border:`1.5px solid rgba(199,154,58,0.15)`, display:'flex', gap:14, alignItems:'center', cursor:'pointer' }}>
+            <span style={{ fontSize:32 }}>🌆</span>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize:13, fontWeight:800, marginBottom:3 }}>Pensacola Underground</div>
+              <div style={{ color:C.muted, fontSize:11, lineHeight:1.5 }}>12 artists from your city · Emerging scene · Discover before mainstream</div>
+            </div>
+            <span style={{ color:C.gold, fontSize:18 }}>›</span>
+          </div>
+        </div>
+
+        {/* Browse by Genre */}
         <div style={{ padding:'0 20px 18px' }}>
           <div style={B.title}>Browse by Genre</div>
           <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:4 }}>
             {GENRES.map(g => <div key={g} style={{ ...B.card, padding:'10px 18px', minWidth:'fit-content', cursor:'pointer', fontSize:12, fontWeight:700, letterSpacing:0.2, transition:'all 0.2s ease' }}>{g}</div>)}
           </div>
         </div>
+
+        {/* For You tracks */}
         <div style={{ padding:'0 16px' }}>
           <div style={B.title}>{activeMood === 'For You' ? 'For You' : `${activeMood} Picks`}</div>
           {TRACKS.map(t => <TrackRow key={t.id} track={t} showLike onPlay={() => { setTrack(t); setScreen('player'); }} />)}
         </div>
+
+        {/* Fans Like You social proof */}
+        <div style={{ padding:'18px 20px 0' }}>
+          <div style={B.title}>Fans Like You Also Loved</div>
+          <div style={{ ...B.card, padding:12, marginBottom:12, display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+            <div style={{ display:'flex' }}>
+              {['J','R','A','K'].map((l,i) => <div key={i} style={{ width:24, height:24, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontSize:9, fontWeight:900, color:C.bg, marginLeft: i ? -6 : 0, border:`1.5px solid ${C.bg}` }}>{l}</div>)}
+            </div>
+            <span style={{ color:C.mutedLight, fontSize:12 }}>Fans with your taste are listening to</span>
+          </div>
+          <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:8 }}>
+            {TRACKS.slice(0,4).map(t => (
+              <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:130, padding:12, cursor:'pointer', transition:'all 0.2s ease' }}>
+                <div style={{ height:60, borderRadius:10, background:`linear-gradient(135deg,rgba(212,165,116,0.2),rgba(20,20,20,0.9))`, display:'grid', placeItems:'center', marginBottom:8, color:C.gold, fontSize:20 }}>▶</div>
+                <div style={{ fontSize:12, fontWeight:700, letterSpacing:-0.2 }}>{t.title}</div>
+                <div style={{ color:C.muted, fontSize:10, marginTop:2, fontWeight:500 }}>{t.artist}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* New from artists you follow */}
         <div style={{ padding:'18px 20px 0' }}>
           <div style={B.title}>New From Artists You Follow</div>
           <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:8 }}>
             {TRACKS.slice(0,4).map(t => (
-              <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:130, padding:12, cursor:'pointer', transition:'all 0.2s ease' }}>
+              <div key={t.id} onClick={() => { setTrack(t); setScreen('player'); }} style={{ ...B.card, minWidth:130, padding:12, cursor:'pointer', transition:'all 0.2s ease', position:'relative' }}>
+                <div style={{ position:'absolute', top:8, right:8, width:8, height:8, borderRadius:'50%', background:C.success, boxShadow:`0 0 6px ${C.success}` }}></div>
                 <div style={{ height:60, borderRadius:10, background:`linear-gradient(135deg,rgba(212,165,116,0.2),rgba(20,20,20,0.9))`, display:'grid', placeItems:'center', marginBottom:8, color:C.gold, fontSize:20, boxShadow:'inset 0 2px 4px rgba(212,165,116,0.15)' }}>▶</div>
                 <div style={{ fontSize:12, fontWeight:700, letterSpacing:-0.2 }}>{t.title}</div>
                 <div style={{ color:C.muted, fontSize:10, marginTop:2, fontWeight:500 }}>{t.artist}</div>
@@ -353,6 +436,8 @@ const FanHomeScreen = ({ setScreen, setTrack }) => {
             ))}
           </div>
         </div>
+
+        {/* Top Podcasts */}
         <div style={{ padding:'18px 20px 0' }}>
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
             <div style={B.title}>Top Podcasts</div>
@@ -516,51 +601,260 @@ const PlayerScreen = ({ setScreen, track, role }) => {
   const [playing, setPlaying] = React.useState(true);
   const [liked, setLiked] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
+  const [followed, setFollowed] = React.useState(false);
+  const [showLyrics, setShowLyrics] = React.useState(false);
+  const [showQueue, setShowQueue] = React.useState(false);
+  const [showComments, setShowComments] = React.useState(false);
+  const [showNotes, setShowNotes] = React.useState(false);
+  const [tipped, setTipped] = React.useState(false);
+  const [reaction, setReaction] = React.useState(null);
   const t = track || TRACKS[0];
+
+  const REACTIONS = ['🔥','❤️','😭','👏','💯','🤯'];
+  const COMMENTS = [
+    { user:'Jamie D', badge:'Superfan', text:'This beat hits different at 2am 🔥', time:'2h' },
+    { user:'Reese T', badge:'Supporter', text:'The way the melody builds in the bridge... insane production', time:'4h' },
+    { user:'Koi M', badge:'', text:'Been on repeat for 3 days straight', time:'6h' },
+    { user:'Alex V', badge:'Day-1 Fan', text:'Knew this was gonna be heat when I heard the preview', time:'1d' },
+  ];
+
+  const panelStyle = {
+    position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)',
+    width:390, background:`linear-gradient(180deg, ${C.card2} 0%, ${C.card} 100%)`,
+    borderRadius:'28px 28px 0 0', border:`1.5px solid ${C.lineBright}`,
+    boxShadow:`0 -20px 80px rgba(0,0,0,0.9), 0 0 60px rgba(199,154,58,0.1)`,
+    zIndex:200, maxHeight:'70vh', display:'flex', flexDirection:'column',
+    animation:'fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+  };
+
   return (
     <div style={{ ...B.screen, background:`linear-gradient(180deg,${C.goldBg} 0%,${C.bg} 40%)` }}>
       <Header title="Now Playing" onBack={() => setScreen(role === 'artist' ? 'artist' : 'home')} right={
-        <button style={{ ...B.ghostBtn, padding:'6px 12px' }} onClick={() => setScreen('subscribe')}>+ Subscribe</button>
+        <button onClick={() => { setFollowed(!followed); }} style={{ ...B.ghostBtn, padding:'6px 14px', fontSize:11, color: followed ? C.gold : C.goldBright, border:`1.5px solid ${followed ? C.gold : 'rgba(199,154,58,0.3)'}`, background: followed ? 'rgba(199,154,58,0.1)' : 'transparent' }}>
+          {followed ? '✓ Following' : '+ Follow'}
+        </button>
       }/>
       <div style={{ ...B.scroll, padding:'4px 22px 24px' }}>
-        <div style={{ aspectRatio:'1', borderRadius:20, border:`1px solid ${C.goldDim}`, background:`linear-gradient(135deg,#2A1F00,#1A1A1A,#111)`, display:'grid', placeItems:'center', marginBottom:18 }}>
-          <div style={{ width:160, height:160, borderRadius:'50%', border:`1px solid ${C.goldDim}`, display:'grid', placeItems:'center' }}>
+        {/* Album Art */}
+        <div style={{ aspectRatio:'1', borderRadius:20, border:`1px solid ${C.goldDim}`, background:`linear-gradient(135deg,#2A1F00,#1A1A1A,#111)`, display:'grid', placeItems:'center', marginBottom:18, position:'relative', overflow:'hidden' }}>
+          <span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 6s linear infinite', opacity:0.06, pointerEvents:'none' }}></span>
+          <div style={{ width:160, height:160, borderRadius:'50%', border:`1px solid ${C.goldDim}`, display:'grid', placeItems:'center', animation:'floatSoft 6s ease-in-out infinite' }}>
             <div style={{ width:75, height:75, borderRadius:'50%', border:`1px solid ${C.goldDim}`, display:'grid', placeItems:'center' }}>
-              <div style={{ width:22, height:22, borderRadius:'50%', background:C.gold }}></div>
+              <div style={{ width:22, height:22, borderRadius:'50%', background:C.gold, animation:'pulse 2s ease-in-out infinite' }}></div>
             </div>
           </div>
+          {/* OWNLN Exclusive badge */}
+          <div style={{ position:'absolute', top:12, right:12, background:C.goldGradient, color:'#000', fontSize:8, fontWeight:900, padding:'4px 10px', borderRadius:20, letterSpacing:1 }}>OWNLN EXCLUSIVE</div>
         </div>
+
+        {/* Track info + actions */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:14 }}>
           <div>
-            <div style={{ fontSize:24, fontWeight:900 }}>{t.title}</div>
-            <div style={{ color:C.muted, fontSize:13 }}>{t.artist}</div>
-            <div style={{ display:'flex', gap:6, marginTop:6 }}>
-              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10 }}>{t.mood}</span>
-              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10 }}>{t.genre}</span>
+            <div style={{ fontSize:24, fontWeight:900, fontFamily:'Inter Tight, Inter, sans-serif', letterSpacing:-0.5 }}>{t.title}</div>
+            <div style={{ color:C.mutedLight, fontSize:13, marginTop:2 }}>{t.artist}</div>
+            <div style={{ display:'flex', gap:6, marginTop:8 }}>
+              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10, padding:'6px 14px' }}>{t.mood}</span>
+              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10, padding:'6px 14px' }}>{t.genre}</span>
             </div>
           </div>
-          <div style={{ display:'flex', gap:10, paddingTop:4 }}>
-            <span onClick={() => setLiked(!liked)} style={{ fontSize:22, cursor:'pointer', color: liked ? C.gold : C.muted }}>{liked ? '♥' : '♡'}</span>
-            <span onClick={() => setSaved(!saved)} style={{ fontSize:20, cursor:'pointer', color: saved ? C.gold : C.muted }}>🔖</span>
+          <div style={{ display:'flex', flexDirection:'column', gap:10, alignItems:'center', paddingTop:4 }}>
+            <span onClick={() => setLiked(!liked)} style={{ fontSize:22, cursor:'pointer', color: liked ? C.gold : C.muted, filter: liked ? 'drop-shadow(0 0 8px rgba(199,154,58,0.5))' : 'none', transition:'all 0.3s' }}>{liked ? '♥' : '♡'}</span>
+            <span onClick={() => setSaved(!saved)} style={{ fontSize:20, cursor:'pointer', color: saved ? C.gold : C.muted, transition:'all 0.3s' }}>🔖</span>
             <span style={{ fontSize:18, cursor:'pointer', color:C.muted }}>↗</span>
           </div>
         </div>
-        <div style={{ height:4, borderRadius:3, background:C.line, marginBottom:6 }}>
-          <div style={{ width:'37%', height:'100%', background:C.gold, borderRadius:3 }}></div>
+
+        {/* Reaction bar */}
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:14, padding:'10px 14px', background:C.card, borderRadius:16, border:`1px solid ${C.line}` }}>
+          {REACTIONS.map(r => (
+            <span key={r} onClick={() => setReaction(reaction===r ? null : r)} style={{ fontSize:20, cursor:'pointer', transition:'all 0.2s', transform: reaction===r ? 'scale(1.4)' : 'scale(1)', filter: reaction===r ? 'drop-shadow(0 0 6px rgba(199,154,58,0.5))' : 'none' }}>{r}</span>
+          ))}
         </div>
-        <div style={{ display:'flex', justifyContent:'space-between', color:C.muted, fontSize:11, marginBottom:20 }}><span>1:24</span><span>{t.duration}</span></div>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
-          <span style={{ color:C.muted, fontSize:18, cursor:'pointer' }}>⤮</span>
-          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:42, height:42, color:C.text, cursor:'pointer', fontSize:16 }}>⏮</button>
-          <button onClick={() => setPlaying(!playing)} style={{ width:70, height:70, borderRadius:'50%', border:'none', background:C.gold, display:'grid', placeItems:'center', animation:'glow 2s ease infinite', fontSize:24, cursor:'pointer' }}>
+
+        {/* Progress bar */}
+        <div style={{ height:5, borderRadius:3, background:C.line, marginBottom:6, cursor:'pointer' }}>
+          <div style={{ width:'37%', height:'100%', background:C.goldGradient, borderRadius:3, position:'relative' }}>
+            <div style={{ position:'absolute', right:-5, top:'50%', transform:'translateY(-50%)', width:12, height:12, borderRadius:'50%', background:C.goldBright, boxShadow:`0 0 8px ${C.gold}` }}></div>
+          </div>
+        </div>
+        <div style={{ display:'flex', justifyContent:'space-between', color:C.muted, fontSize:11, marginBottom:22 }}><span>1:24</span><span>{t.duration}</span></div>
+
+        {/* Controls row with ±15s */}
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+          <span style={{ color:C.muted, fontSize:16, cursor:'pointer' }}>⤮</span>
+          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:38, height:38, color:C.text, cursor:'pointer', fontSize:14, display:'grid', placeItems:'center' }}>⏮</button>
+          {/* -15s */}
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer', gap:2 }}>
+            <span style={{ fontSize:18, color:C.mutedLight }}>↺</span>
+            <span style={{ fontSize:8, color:C.muted, fontWeight:800, letterSpacing:0.5 }}>15</span>
+          </div>
+          <button onClick={() => setPlaying(!playing)} style={{ width:68, height:68, borderRadius:'50%', border:'none', background:C.goldGradient, display:'grid', placeItems:'center', fontSize:22, cursor:'pointer', boxShadow:`0 8px 32px rgba(199,154,58,0.5), 0 0 40px rgba(199,154,58,0.2)` }}>
             {playing ? '⏸' : '▶'}
           </button>
-          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:42, height:42, color:C.text, cursor:'pointer', fontSize:16 }}>⏭</button>
-          <span style={{ color:C.muted, fontSize:18, cursor:'pointer' }}>↻</span>
+          {/* +15s */}
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer', gap:2 }}>
+            <span style={{ fontSize:18, color:C.mutedLight }}>↻</span>
+            <span style={{ fontSize:8, color:C.muted, fontWeight:800, letterSpacing:0.5 }}>15</span>
+          </div>
+          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:38, height:38, color:C.text, cursor:'pointer', fontSize:14, display:'grid', placeItems:'center' }}>⏭</button>
+          <span style={{ color:C.muted, fontSize:16, cursor:'pointer' }}>⇄</span>
         </div>
-        <button onClick={() => setScreen('library')} style={{ ...B.ghostBtn, width:'100%', marginBottom:8 }}>+ Add to Playlist</button>
-        <button style={{ ...B.ghostBtn, width:'100%' }}>Show Lyrics</button>
+
+        {/* Action row */}
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', gap:8, marginBottom:16 }}>
+          <button onClick={() => { setShowQueue(!showQueue); setShowLyrics(false); setShowComments(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showQueue ? `1.5px solid ${C.gold}` : undefined, color: showQueue ? C.gold : C.goldBright }}>
+            <span style={{ fontSize:16 }}>☰</span><span>Queue</span>
+          </button>
+          <button onClick={() => { setShowLyrics(!showLyrics); setShowQueue(false); setShowComments(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showLyrics ? `1.5px solid ${C.gold}` : undefined, color: showLyrics ? C.gold : C.goldBright }}>
+            <span style={{ fontSize:16 }}>♪</span><span>Lyrics</span>
+          </button>
+          <button onClick={() => { setShowComments(!showComments); setShowQueue(false); setShowLyrics(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showComments ? `1.5px solid ${C.gold}` : undefined, color: showComments ? C.gold : C.goldBright }}>
+            <span style={{ fontSize:16 }}>💬</span><span>12</span>
+          </button>
+          <button onClick={() => setTipped(!tipped)} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: tipped ? `1.5px solid ${C.gold}` : undefined, color: tipped ? C.gold : C.goldBright, background: tipped ? 'rgba(199,154,58,0.1)' : undefined }}>
+            <span style={{ fontSize:16 }}>💰</span><span>{tipped ? 'Tipped!' : 'Tip'}</span>
+          </button>
+        </div>
+
+        {/* Artist Notes toggle */}
+        <button onClick={() => { setShowNotes(!showNotes); setShowQueue(false); setShowLyrics(false); setShowComments(false); }} style={{ ...B.ghostBtn, width:'100%', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 18px' }}>
+          <span style={{ fontSize:12, fontWeight:700 }}>📝 Story Behind This Track</span>
+          <span style={{ color:C.gold, fontSize:14 }}>{showNotes ? '▲' : '▼'}</span>
+        </button>
+        {showNotes && (
+          <div style={{ ...B.card, padding:18, marginBottom:8, animation:'fadeInUp 0.3s ease' }}>
+            <div style={{ fontSize:13, color:C.textSoft, lineHeight:1.8, marginBottom:14 }}>
+              "Midnight Gold was written at 3am after a long session that wasn't going anywhere. I sent everyone home, opened a new session, and in 45 minutes this was done. Sometimes the best music happens when you stop trying."
+            </div>
+            <div style={{ color:C.muted, fontSize:11, fontWeight:700 }}>— {t.artist}</div>
+            <div style={{ borderTop:`1px solid ${C.line}`, marginTop:12, paddingTop:12 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:C.muted, letterSpacing:0.5, marginBottom:8 }}>CREDITS</div>
+              {[['Producer','Marcus Allen'],['Co-Writer','Maya Quinn'],['Mixed by','Noah Lane'],['Mastered by','Ari Vega']].map(([role, name]) => (
+                <div key={role} style={{ display:'flex', justifyContent:'space-between', fontSize:11, padding:'4px 0', borderBottom:`1px solid ${C.lineDim}` }}>
+                  <span style={{ color:C.muted }}>{role}</span>
+                  <span style={{ fontWeight:700 }}>{name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button onClick={() => setScreen('library')} style={{ ...B.ghostBtn, width:'100%' }}>+ Add to Playlist</button>
       </div>
+
+      {/* Queue Panel */}
+      {showQueue && (
+        <div style={panelStyle}>
+          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
+            <div style={{ fontWeight:800, fontSize:16 }}>Up Next</div>
+            <button onClick={() => setShowQueue(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
+          </div>
+          <div style={{ overflowY:'auto', padding:'8px 16px 24px' }}>
+            {TRACKS.map((tr, i) => (
+              <div key={tr.id} style={{ ...B.card, padding:'12px 14px', marginBottom:8, display:'flex', alignItems:'center', gap:12, cursor:'pointer', border: i===0 ? `1.5px solid ${C.lineBright}` : undefined }}>
+                {i === 0 && <div style={{ width:4, height:40, borderRadius:4, background:C.goldGradient, flexShrink:0 }}></div>}
+                <span style={{ color:C.muted, fontSize:11, width:16, textAlign:'center', flexShrink:0 }}>{i+1}</span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', color: i===0 ? C.gold : C.text }}>{tr.title}</div>
+                  <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{tr.artist}</div>
+                </div>
+                <span style={{ color:C.muted, fontSize:11 }}>{tr.duration}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Lyrics Panel */}
+      {showLyrics && (
+        <div style={panelStyle}>
+          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
+            <div>
+              <div style={{ fontWeight:800, fontSize:16 }}>Lyrics</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{t.title} · {t.artist}</div>
+            </div>
+            <button onClick={() => setShowLyrics(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
+          </div>
+          <div style={{ overflowY:'auto', padding:'16px 20px 40px', lineHeight:2.2, fontSize:14 }}>
+            {[
+              { text:'I built this from nothing', active:true },
+              { text:'Gold in my veins not a ceiling', active:false },
+              { text:'Every door that was closed', active:false },
+              { text:"I found a way, I wasn't leaving", active:false },
+              { text:'', active:false },
+              { text:'Midnight gold, midnight gold', active:false },
+              { text:'Shining through the stories untold', active:false },
+              { text:'Midnight gold, midnight gold', active:false },
+              { text:'Everything I touch turns to gold', active:false },
+              { text:'', active:false },
+              { text:'They said wait your turn', active:false },
+              { text:"I said I don't take orders", active:false },
+              { text:'Ownership on every bar', active:false },
+              { text:'No label at my borders', active:false },
+            ].map((line, i) => (
+              <div key={i} style={{ color: line.active ? C.textSoft : C.muted, fontWeight: line.active ? 800 : 400, fontSize: line.active ? 15 : 13, transition:'all 0.3s', filter: line.active ? 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' : 'none', letterSpacing: line.active ? 0.2 : 0 }}>{line.text || <br/>}</div>
+            ))}
+            <div style={{ marginTop:16, paddingTop:12, borderTop:`1px solid ${C.line}`, color:C.muted, fontSize:11 }}>Written by Marcus Allen · Maya Quinn</div>
+          </div>
+        </div>
+      )}
+
+      {/* Comments Panel */}
+      {showComments && (
+        <div style={panelStyle}>
+          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
+            <div>
+              <div style={{ fontWeight:800, fontSize:16 }}>Fan Comments</div>
+              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>12 comments</div>
+            </div>
+            <button onClick={() => setShowComments(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
+          </div>
+          <div style={{ padding:'8px 16px', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
+            <input style={{ ...B.input, padding:'12px 16px', fontSize:13 }} placeholder="Add a comment..." />
+          </div>
+          <div style={{ overflowY:'auto', padding:'8px 16px 24px' }}>
+            {COMMENTS.map((c, i) => (
+              <div key={i} style={{ ...B.card, padding:'12px 14px', marginBottom:8 }}>
+                <div style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
+                  <div style={{ width:34, height:34, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:C.bg, fontSize:11, flexShrink:0 }}>{c.user[0]}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
+                      <span style={{ fontWeight:700, fontSize:12 }}>{c.user}</span>
+                      {c.badge && <span style={{ background:C.goldBg, color:C.gold, fontSize:8, fontWeight:900, padding:'2px 7px', borderRadius:10, border:`1px solid ${C.lineBright}`, letterSpacing:0.5 }}>{c.badge}</span>}
+                      <span style={{ color:C.muted, fontSize:10, marginLeft:'auto' }}>{c.time}</span>
+                    </div>
+                    <div style={{ color:C.textSoft, fontSize:12, lineHeight:1.5 }}>{c.text}</div>
+                    <div style={{ display:'flex', gap:12, marginTop:8 }}>
+                      <span style={{ color:C.muted, fontSize:11, cursor:'pointer' }}>♡ 4</span>
+                      <span style={{ color:C.muted, fontSize:11, cursor:'pointer' }}>Reply</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tip Panel */}
+      {tipped && (
+        <div style={{ ...panelStyle, maxHeight:'auto' }}>
+          <div style={{ padding:'24px 20px' }}>
+            <div style={{ textAlign:'center', marginBottom:20 }}>
+              <div style={{ fontSize:40, marginBottom:8 }}>💰</div>
+              <div style={{ fontWeight:900, fontSize:18, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Tip Marcus Allen</div>
+              <div style={{ color:C.muted, fontSize:12, marginTop:4 }}>100% goes directly to the artist</div>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
+              {['$1','$3','$5','$10','$20','Custom'].map(amt => (
+                <button key={amt} style={{ ...B.ghostBtn, padding:'14px 0', fontSize:12, fontWeight:800 }}>{amt}</button>
+              ))}
+            </div>
+            <button onClick={() => setTipped(false)} style={{ ...B.goldBtn, width:'100%', marginBottom:10, fontSize:13 }}>SEND TIP 💰</button>
+            <button onClick={() => setTipped(false)} style={{ ...B.ghostBtn, width:'100%', fontSize:12 }}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -847,9 +1141,17 @@ const ArtistScreen = ({ setScreen, setTrack }) => (
           </div>
         </div>
       </div>
-      <div style={{ display:'flex', gap:8, marginBottom:14 }}>
+      <div style={{ display:'flex', gap:8, marginBottom:10 }}>
         <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, flex:1, animation:'glow 2s ease infinite' }}>From $1/mo</button>
         <button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Dashboard</button>
+      </div>
+      <div style={{ ...B.card, padding:12, marginBottom:14, display:'flex', gap:12, alignItems:'center' }}>
+        <span style={{ fontSize:24 }}>📣</span>
+        <div style={{ flex:1 }}>
+          <div style={{ fontSize:12, fontWeight:700, marginBottom:2 }}>Post to Your Fans</div>
+          <div style={{ color:C.muted, fontSize:11 }}>Announcement · Poll · Behind the Scenes · Merch Drop</div>
+        </div>
+        <button style={{ ...B.goldBtn, padding:'8px 14px', fontSize:10 }}>POST</button>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:14 }}>
         {[['$3,240','Revenue'],['48.2K','Streams'],['87.4','Score']].map(([v,l]) => (
@@ -894,14 +1196,102 @@ const FanProfileScreen = ({ setScreen }) => (
       <div style={{ position:'absolute', left:16, bottom:-36, width:72, height:72, borderRadius:'50%', background:`linear-gradient(135deg,${C.blue},#1A3A6A)`, border:`3px solid ${C.bg}`, display:'grid', placeItems:'center', fontSize:22, fontWeight:900, color:'#fff' }}>JD</div>
     </div>
     <div style={{ ...B.scroll, padding:'44px 16px 24px' }}>
-      <div style={{ fontSize:20, fontWeight:900 }}>Jamie D</div>
-      <div style={{ color:C.muted, fontSize:12, marginBottom:12 }}>Fan · Joined Jan 2025 · Following 12 artists</div>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:4 }}>
+        <div>
+          <div style={{ fontSize:20, fontWeight:900 }}>Jamie D</div>
+          <div style={{ color:C.muted, fontSize:12, marginTop:2 }}>Fan · Joined Jan 2025 · Following 12 artists</div>
+        </div>
+        <span style={{ background:C.goldGradient, color:'#000', fontSize:8, fontWeight:900, padding:'5px 12px', borderRadius:20, letterSpacing:1, marginTop:4 }}>DAY-1 FAN</span>
+      </div>
+
+      {/* Fan tier badges row */}
+      <div style={{ display:'flex', gap:8, marginBottom:16, flexWrap:'wrap' }}>
+        {[
+          { badge:'🔥 7-Day Streak', color:'rgba(255,100,0,0.15)', border:'rgba(255,100,0,0.3)', text:'#FF6B2B' },
+          { badge:'⭐ Top Supporter', color:C.goldBg, border:C.lineBright, text:C.gold },
+          { badge:'🎯 Explorer', color:'rgba(80,120,255,0.1)', border:'rgba(80,120,255,0.3)', text:'#6090FF' },
+        ].map(b => (
+          <span key={b.badge} style={{ background:b.color, color:b.text, border:`1px solid ${b.border}`, fontSize:10, fontWeight:800, padding:'5px 12px', borderRadius:20, letterSpacing:0.3 }}>{b.badge}</span>
+        ))}
+      </div>
+
       <div style={{ display:'flex', gap:8, marginBottom:14 }}>
         <button onClick={() => setScreen('fansaved')} style={{ ...B.outlineBtn, flex:1 }}>My Library</button>
         <button onClick={() => setScreen('settings')} style={{ ...B.ghostBtn, flex:1 }}>Settings</button>
       </div>
+
+      {/* Trophy Case */}
+      <div style={{ ...B.card, padding:14, marginBottom:12 }}>
+        <div style={{ fontWeight:800, fontSize:14, marginBottom:10 }}>🏆 Trophy Case</div>
+        <div style={{ display:'flex', gap:10, overflowX:'auto', paddingBottom:4 }}>
+          {[
+            { icon:'🥇', label:'Day-1 Fan',     desc:'Followed before 1K' },
+            { icon:'🔥', label:'7-Day Streak',   desc:'Listened 7 days' },
+            { icon:'💎', label:'Superfan',        desc:'Top 1% listener' },
+            { icon:'🎯', label:'Discovered First', desc:'Pre-viral follow' },
+            { icon:'🎁', label:'Generous',        desc:'Tipped 5+ artists' },
+            { icon:'📣', label:'Tastemaker',      desc:'3 shared tracks went viral' },
+          ].map(t => (
+            <div key={t.icon} style={{ ...B.cardPremium, minWidth:80, padding:'12px 8px', textAlign:'center', flexShrink:0 }}>
+              <div style={{ fontSize:24, marginBottom:4 }}>{t.icon}</div>
+              <div style={{ fontSize:9, fontWeight:800, color:C.gold, letterSpacing:0.3, lineHeight:1.3 }}>{t.label}</div>
+              <div style={{ fontSize:8, color:C.muted, marginTop:2, lineHeight:1.3 }}>{t.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* My Impact */}
+      <div style={{ ...B.card, padding:14, marginBottom:12 }}>
+        <div style={{ fontWeight:800, fontSize:14, marginBottom:12 }}>📊 My Impact</div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+          {[
+            ['14','Playlists Created'],
+            ['48','Tracks Saved'],
+            ['$36','Tipped to Artists'],
+            ['8','Songs Shared'],
+          ].map(([v, l]) => (
+            <div key={l} style={{ background:C.card2, borderRadius:14, padding:'10px 12px', border:`1px solid ${C.line}` }}>
+              <div style={{ fontSize:20, fontWeight:900, color:C.gold, letterSpacing:-0.5 }}>{v}</div>
+              <div style={{ color:C.muted, fontSize:10, marginTop:3, fontWeight:600 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Fan spending transparency */}
+      <div style={{ ...B.goldCard, padding:14, marginBottom:12 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10 }}>
+          <div style={{ fontWeight:800, fontSize:14 }}>💛 You Supported Artists With</div>
+          <div style={{ color:C.gold, fontSize:22, fontWeight:900 }}>$48</div>
+        </div>
+        <div style={{ color:C.muted, fontSize:11, marginBottom:10 }}>This month · 3 artists · 80% goes directly to them</div>
+        {['Marcus Allen — $20','Maya Quinn — $18','Ari Vega — $10'].map(s => (
+          <div key={s} style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:`1px solid ${C.lineDim}`, fontSize:12 }}>
+            <span>{s.split(' — ')[0]}</span>
+            <span style={{ color:C.success, fontWeight:700 }}>{s.split(' — ')[1]}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Fan wallet */}
+      <div style={{ ...B.card, padding:14, marginBottom:12 }}>
+        <div style={{ fontWeight:800, fontSize:14, marginBottom:10 }}>👛 Fan Wallet</div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:10 }}>
+          <div>
+            <div style={{ color:C.muted, fontSize:11 }}>Tip Balance</div>
+            <div style={{ fontSize:20, fontWeight:900, color:C.gold, marginTop:2 }}>$12.00</div>
+          </div>
+          <div>
+            <div style={{ color:C.muted, fontSize:11 }}>Loyalty Points</div>
+            <div style={{ fontSize:20, fontWeight:900, color:C.goldBright, marginTop:2 }}>340 pts</div>
+          </div>
+        </div>
+        <button style={{ ...B.outlineBtn, width:'100%', fontSize:11 }}>Add Funds · Purchase History</button>
+      </div>
+
       <div style={{ ...B.card, padding:12, marginBottom:12 }}>
-        <div style={{ fontWeight:700, marginBottom:8 }}>Active Subscriptions</div>
+        <div style={{ fontWeight:700, marginBottom:6 }}>Active Subscriptions</div>
         {['Marcus Allen — Insider $3.99/mo','Maya Quinn — Superfan $5.99/mo'].map(s => (
           <div key={s} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:`1px solid ${C.line}`, fontSize:12 }}>
             <span>{s}</span><span style={{ color:C.success }}>Active</span>
@@ -938,7 +1328,8 @@ const SubscribeScreen = ({ setScreen, role }) => (
           </div>
           <div style={{ color:C.gold, fontSize:24, fontWeight:900 }}>$1.00</div>
         </div>
-        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits (to be finalized): badge, priority comments, supporter-only posts.</div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Fan badge · Supporter-only posts · Priority comment highlighting</div>
+        <div style={{ color:C.gold, fontSize:10, fontWeight:700, marginTop:8 }}>💛 Artist receives $0.80 of every $1.00</div>
         <button style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Choose Supporter</button>
       </div>
 
@@ -950,7 +1341,8 @@ const SubscribeScreen = ({ setScreen, role }) => (
           </div>
           <div style={{ color:C.gold, fontSize:24, fontWeight:900 }}>$3.99</div>
         </div>
-        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits: early content previews, bonus drops, fan club threads.</div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Early content previews · Bonus drops · Fan club threads · Exclusive merch</div>
+        <div style={{ color:C.gold, fontSize:10, fontWeight:700, marginTop:8 }}>💛 Artist receives $3.19 of every $3.99</div>
         <button style={{ ...B.outlineBtn, width:'100%', marginTop:10 }}>Choose Insider</button>
       </div>
 
@@ -963,12 +1355,13 @@ const SubscribeScreen = ({ setScreen, role }) => (
           </div>
           <div style={{ color:C.gold, fontSize:26, fontWeight:900 }}>$5.99</div>
         </div>
-        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Placeholder benefits: premium fan club access, priority live chat, exclusive drops.</div>
+        <div style={{ color:C.muted, fontSize:12, marginTop:8 }}>Premium fan club access · Priority live chat · Exclusive drops · Private listening events</div>
+        <div style={{ color:C.gold, fontSize:10, fontWeight:700, marginTop:8 }}>💛 Artist receives $4.79 of every $5.99</div>
         <button style={{ ...B.goldBtn, width:'100%', marginTop:12, animation:'glow 2s ease infinite' }}>Choose Superfan</button>
       </div>
 
       <div style={{ ...B.card, padding:12, textAlign:'center' }}>
-        <div style={{ color:C.muted, fontSize:11 }}>Exact benefits will be finalized with your client. Cancel anytime.</div>
+        <div style={{ color:C.muted, fontSize:11 }}>Cancel anytime · No hidden fees · Creators keep 80%</div>
       </div>
     </div>
   </div>
@@ -1028,6 +1421,39 @@ const OpiScreen = ({ setScreen }) => (
           <span>Total</span><span style={{ color:C.gold }}>$892</span>
         </div>
       </div>
+
+      {/* AI Insight Card */}
+      <div style={{ ...B.goldCard, padding:14, marginBottom:14 }}>
+        <div style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
+          <span style={{ fontSize:24, flexShrink:0 }}>💡</span>
+          <div>
+            <div style={{ fontWeight:800, fontSize:13, marginBottom:4 }}>AI Insight</div>
+            <div style={{ color:C.textSoft, fontSize:12, lineHeight:1.6 }}>Your engagement peaks <span style={{ color:C.gold, fontWeight:700 }}>Thursday 8–10pm</span>. Schedule your next release then for maximum reach.</div>
+            <div style={{ color:C.muted, fontSize:11, marginTop:6 }}>Also: fans who liked Midnight Gold have a 68% save rate — push similar content.</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Peer Benchmark */}
+      <div style={{ ...B.card, padding:14, marginBottom:14 }}>
+        <div style={{ fontWeight:700, marginBottom:10 }}>📊 Peer Benchmark</div>
+        {[
+          ['Monthly Streams', '48.2K', '12K avg', true],
+          ['New Followers/mo', '1,240', '380 avg', true],
+          ['Subscriber Rate', '3.2%', '1.8% avg', true],
+          ['Avg Stream Duration', '2:48', '2:12 avg', true],
+        ].map(([metric, yours, avg, above]) => (
+          <div key={metric} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'8px 0', borderBottom:`1px solid ${C.line}`, fontSize:12 }}>
+            <span style={{ color:C.muted }}>{metric}</span>
+            <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+              <span style={{ color:C.muted, fontSize:10 }}>{avg}</span>
+              <span style={{ color: above ? C.success : C.danger, fontWeight:800 }}>{yours} {above ? '↑' : '↓'}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button style={{ ...B.ghostBtn, width:'100%', marginBottom:8 }}>📥 Export Full Report</button>
     </div>
   </div>
 );
@@ -1053,6 +1479,20 @@ const WalletScreen = ({ setScreen }) => {
               <div style={{ display:'flex', gap:10, marginTop:10 }}>
                 <button style={{ ...B.goldBtn, flex:1 }}>Withdraw Funds</button>
                 <button onClick={() => setScreen('opi')} style={{ ...B.outlineBtn, flex:1 }}>Full Report</button>
+              </div>
+              <div style={{ display:'flex', gap:10, marginTop:10 }}>
+                <div style={{ flex:1, background:'rgba(16,185,129,0.08)', border:`1px solid rgba(16,185,129,0.2)`, borderRadius:12, padding:'8px 10px', textAlign:'center' }}>
+                  <div style={{ color:C.success, fontSize:9, fontWeight:800, letterSpacing:0.5 }}>MIN PAYOUT</div>
+                  <div style={{ fontWeight:900, fontSize:13, marginTop:2 }}>$10</div>
+                </div>
+                <div style={{ flex:1, background:'rgba(59,130,246,0.08)', border:`1px solid rgba(59,130,246,0.2)`, borderRadius:12, padding:'8px 10px', textAlign:'center' }}>
+                  <div style={{ color:C.blue, fontSize:9, fontWeight:800, letterSpacing:0.5 }}>PAYOUT TIME</div>
+                  <div style={{ fontWeight:900, fontSize:13, marginTop:2 }}>3 Days</div>
+                </div>
+                <div style={{ flex:1, background:C.goldBg, border:`1px solid ${C.lineBright}`, borderRadius:12, padding:'8px 10px', textAlign:'center' }}>
+                  <div style={{ color:C.gold, fontSize:9, fontWeight:800, letterSpacing:0.5 }}>TAX DOCS</div>
+                  <div style={{ fontWeight:900, fontSize:13, marginTop:2 }}>Auto 📄</div>
+                </div>
               </div>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:14 }}>
@@ -1127,7 +1567,10 @@ const UploadScreen = ({ setScreen }) => (
         <button style={{ ...B.goldBtn, marginTop:14, animation:'glow 2s ease infinite' }}>Choose File</button>
       </div>
       <div style={{ ...B.card, padding:14, marginBottom:10 }}>
-        <div style={{ fontWeight:700, marginBottom:10 }}>Track Details</div>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+          <div style={{ fontWeight:700 }}>Track Details</div>
+          <button style={{ ...B.ghostBtn, padding:'5px 12px', fontSize:10 }}>✨ AI Auto-fill</button>
+        </div>
         <div style={{ display:'grid', gap:10 }}>
           <input style={B.input} placeholder="Track title" />
           <input style={B.input} placeholder="Genre (e.g. R&B, Soul, Afrobeats)" />
@@ -1135,12 +1578,30 @@ const UploadScreen = ({ setScreen }) => (
           <input style={B.input} placeholder="Schedule release date (optional)" type="date" />
         </div>
       </div>
-      <div style={{ ...B.card, padding:12, marginBottom:14 }}>
+      <div style={{ ...B.card, padding:12, marginBottom:10 }}>
         <div style={{ fontWeight:700, marginBottom:8 }}>Pricing Model</div>
         <div style={{ display:'flex', gap:8 }}>
           {['Free Stream','Pay to Download','Subscriber Only'].map(opt => (
             <button key={opt} style={{ flex:1, background:C.card, color:C.muted, border:`1px solid ${C.line}`, borderRadius:10, padding:'8px 4px', fontSize:10, fontWeight:600, cursor:'pointer' }}>{opt}</button>
           ))}
+        </div>
+      </div>
+      <div style={{ ...B.card, padding:12, marginBottom:10 }}>
+        <div style={{ fontWeight:700, marginBottom:8 }}>Distribution</div>
+        <div style={{ display:'flex', gap:8 }}>
+          {['OWNLN Exclusive 🔒','OWNLN + External'].map((opt,i) => (
+            <button key={opt} style={{ flex:1, background: i===0 ? C.goldBg : C.card, color: i===0 ? C.gold : C.muted, border: i===0 ? `1.5px solid ${C.lineBright}` : `1px solid ${C.line}`, borderRadius:10, padding:'10px 6px', fontSize:10, fontWeight:700, cursor:'pointer' }}>{opt}</button>
+          ))}
+        </div>
+        <div style={{ color:C.muted, fontSize:10, marginTop:8 }}>Exclusive tracks get featured placement + higher royalty rate</div>
+      </div>
+      <div style={{ ...B.card, padding:12, marginBottom:14, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <div>
+          <div style={{ fontWeight:700, fontSize:13 }}>📱 Auto-share when published</div>
+          <div style={{ color:C.muted, fontSize:11, marginTop:3 }}>Post to Instagram story + Twitter instantly</div>
+        </div>
+        <div style={{ width:44, height:26, borderRadius:13, background:C.goldGradient, position:'relative', cursor:'pointer' }}>
+          <div style={{ position:'absolute', right:3, top:3, width:20, height:20, borderRadius:'50%', background:'#000' }}></div>
         </div>
       </div>
       <button style={{ ...B.goldBtn, width:'100%', animation:'glow 2s ease infinite' }}>Submit & Publish</button>
@@ -1606,18 +2067,67 @@ const FanSavedScreen = ({ setScreen, setTrack }) => (
 const ArtistPublicScreen = ({ setScreen, setTrack }) => (
   <div style={B.screen}>
     <Header title="Artist Profile" onBack={() => setScreen('search')} right={
-      <button style={{ ...B.outlineBtn, padding:'6px 12px', fontSize:11 }}>Follow</button>
+      <button style={{ ...B.outlineBtn, padding:'6px 12px', fontSize:11 }}>+ Follow</button>
     }/>
     <div style={{ ...B.scroll, padding:'0 16px 24px' }}>
-      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:14 }}>
-        <div style={{ width:72, height:72, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:C.bg, fontSize:22, flexShrink:0 }}>MQ</div>
-        <div>
+      {/* Artist header */}
+      <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom:12 }}>
+        <div style={{ position:'relative' }}>
+          <div style={{ width:72, height:72, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:C.bg, fontSize:22 }}>MQ</div>
+          <div style={{ position:'absolute', bottom:-2, right:-2, background:C.goldGradient, color:'#000', fontSize:8, fontWeight:900, padding:'2px 7px', borderRadius:12 }}>VERIFIED</div>
+        </div>
+        <div style={{ flex:1 }}>
           <div style={{ fontSize:20, fontWeight:900 }}>Maya Quinn</div>
-          <div style={{ color:C.muted, fontSize:12 }}>84K Followers · R&B / Neo-Soul</div>
-          <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, padding:'6px 12px', fontSize:11, marginTop:6 }}>Subscribe</button>
+          <div style={{ color:C.muted, fontSize:12, marginTop:2 }}>84K Followers · R&B / Neo-Soul</div>
+          <div style={{ display:'flex', gap:8, marginTop:8 }}>
+            <button onClick={() => setScreen('subscribe')} style={{ ...B.goldBtn, padding:'8px 14px', fontSize:11 }}>Subscribe</button>
+            <button style={{ ...B.ghostBtn, padding:'8px 14px', fontSize:11 }}>💰 Tip</button>
+          </div>
         </div>
       </div>
+
+      {/* Stats row */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:14 }}>
+        {[['84K','Followers'],['1.2M','Streams'],['4.8★','Rating']].map(([v,l]) => (
+          <div key={l} style={{ ...B.card, padding:10, textAlign:'center' }}>
+            <div style={{ fontWeight:900, fontSize:15, color:C.gold }}>{v}</div>
+            <div style={{ color:C.muted, fontSize:10, marginTop:2 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Collectibles teaser */}
+      <div style={{ ...B.goldCard, padding:12, marginBottom:14, display:'flex', gap:12, alignItems:'center', cursor:'pointer' }}>
+        <span style={{ fontSize:28 }}>🏆</span>
+        <div style={{ flex:1 }}>
+          <div style={{ fontSize:13, fontWeight:800, marginBottom:2 }}>2 Collectibles Available</div>
+          <div style={{ color:C.muted, fontSize:11 }}>Limited edition · Only 50 each · Holders get exclusive access</div>
+        </div>
+        <span style={{ color:C.gold }}>›</span>
+      </div>
+
+      {/* Genre tags */}
+      <div style={{ display:'flex', gap:6, marginBottom:14, flexWrap:'wrap' }}>
+        {['R&B','Neo-Soul','OWNLN Exclusive'].map(g => (
+          <span key={g} style={{ ...B.pill, background: g==='OWNLN Exclusive' ? C.goldGradient : C.card, color: g==='OWNLN Exclusive' ? '#000' : C.muted, border:`1px solid ${C.line}`, fontSize:10, padding:'6px 14px', fontWeight: g==='OWNLN Exclusive' ? 900 : 600 }}>{g}</span>
+        ))}
+      </div>
+
+      {/* Tracks */}
+      <div style={B.title}>Top Tracks</div>
       {TRACKS.map(t => <TrackRow key={t.id} track={t} showLike onPlay={() => { setTrack(t); setScreen('player'); }} />)}
+
+      {/* Similar artists */}
+      <div style={{ ...B.title, marginTop:16 }}>Fans Also Follow</div>
+      <div style={{ display:'flex', gap:12, overflowX:'auto', paddingBottom:8 }}>
+        {[{n:'Marcus Allen',g:'R&B / Soul'},{n:'Ari Vega',g:'Neo-Soul'},{n:'Noah Lane',g:'Afrobeats'}].map(a => (
+          <div key={a.n} style={{ ...B.card, minWidth:110, padding:12, textAlign:'center', cursor:'pointer', flexShrink:0 }}>
+            <div style={{ width:44, height:44, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:C.bg, fontSize:14, margin:'0 auto 8px' }}>{a.n[0]}</div>
+            <div style={{ fontSize:11, fontWeight:700 }}>{a.n}</div>
+            <div style={{ color:C.muted, fontSize:9, marginTop:2 }}>{a.g}</div>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -1816,8 +2326,14 @@ const ArtistOnboardingScreen = ({ setScreen, onComplete }) => {
         return (
           <div>
             <div style={{ fontSize:24, fontWeight:900, fontFamily:'Inter Tight, Inter, sans-serif', background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', marginBottom:12, letterSpacing:-0.8, textAlign:'center' }}>Artist Bio</div>
-            <div style={{ color:C.mutedLight, fontSize:13, marginBottom:24, lineHeight:1.6, textAlign:'center' }}>Tell fans about your music journey</div>
-            <textarea placeholder="Write your bio here..." style={{ ...B.input, minHeight:160, resize:'vertical', fontFamily:'Inter, sans-serif' }}></textarea>
+            <div style={{ color:C.mutedLight, fontSize:13, marginBottom:16, lineHeight:1.6, textAlign:'center' }}>Tell fans about your music journey</div>
+            <button style={{ ...B.ghostBtn, width:'100%', marginBottom:14, display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px' }}>
+              <span style={{ fontSize:16 }}>✨</span>
+              <span style={{ fontSize:12, fontWeight:800 }}>Generate Bio with AI</span>
+              <span style={{ color:C.muted, fontSize:10 }}>(fills in 3 sec)</span>
+            </button>
+            <textarea placeholder="Write your bio here..." style={{ ...B.input, minHeight:140, resize:'vertical', fontFamily:'Inter, sans-serif' }}></textarea>
+            <div style={{ color:C.muted, fontSize:10, marginTop:8, textAlign:'right' }}>0 / 500 characters</div>
           </div>
         );
       case 3:
