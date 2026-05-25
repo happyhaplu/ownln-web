@@ -595,270 +595,386 @@ const SearchScreen = ({ setScreen, setTrack, role }) => {
 };
 
 /* ══════════════════════════════════════════════════
-   PLAYER
+   PLAYER — CINEMATIC PREMIUM BUILD v2
 ══════════════════════════════════════════════════ */
 const PlayerScreen = ({ setScreen, track, role }) => {
   const [playing, setPlaying] = React.useState(true);
   const [liked, setLiked] = React.useState(false);
-  const [saved, setSaved] = React.useState(false);
   const [followed, setFollowed] = React.useState(false);
-  const [showLyrics, setShowLyrics] = React.useState(false);
-  const [showQueue, setShowQueue] = React.useState(false);
+  const [showMore, setShowMore] = React.useState(false);
+  const [showPlaylistMenu, setShowPlaylistMenu] = React.useState(false);
+  const [showShare, setShowShare] = React.useState(false);
   const [showComments, setShowComments] = React.useState(false);
-  const [showNotes, setShowNotes] = React.useState(false);
-  const [tipped, setTipped] = React.useState(false);
-  const [reaction, setReaction] = React.useState(null);
-  const t = track || TRACKS[0];
+  const [showTip, setShowTip] = React.useState(false);
+  const [showNotifications, setShowNotifications] = React.useState(false);
+  const [selectedTip, setSelectedTip] = React.useState(null);
+  const t = track || { title:'Still Dreaming', artist:'JAY TRUE', duration:'3:58', mood:'Late Night', genre:'R&B' };
 
-  const REACTIONS = ['🔥','❤️','😭','👏','💯','🤯'];
-  const COMMENTS = [
-    { user:'Jamie D', badge:'Superfan', text:'This beat hits different at 2am 🔥', time:'2h' },
-    { user:'Reese T', badge:'Supporter', text:'The way the melody builds in the bridge... insane production', time:'4h' },
-    { user:'Koi M', badge:'', text:'Been on repeat for 3 days straight', time:'6h' },
-    { user:'Alex V', badge:'Day-1 Fan', text:'Knew this was gonna be heat when I heard the preview', time:'1d' },
+  const anyOverlay = showMore || showShare || showComments || showTip || showNotifications || showPlaylistMenu;
+  const closeAll = () => { setShowMore(false); setShowPlaylistMenu(false); setShowShare(false); setShowComments(false); setShowTip(false); setShowNotifications(false); };
+
+  const PC = {
+    bg:'#0E0B08', bgCenter:'#1A1510', bgDeep:'#070707',
+    panel:'rgba(47,41,35,0.96)', gold:'#E8B547', goldSoft:'#C79A3A',
+    text:'#F4E8D0', muted:'rgba(244,232,208,0.52)', border:'rgba(232,181,71,0.28)', danger:'#E04B43',
+  };
+  const overlayDim = { position:'fixed', inset:0, background:'rgba(0,0,0,0.54)', backdropFilter:'blur(2px)', zIndex:40 };
+  const floatingPanel = { position:'fixed', background:PC.panel, border:`1px solid ${PC.border}`, borderRadius:22, boxShadow:'0 24px 80px rgba(0,0,0,0.65), 0 0 40px rgba(232,181,71,0.06)', backdropFilter:'blur(20px)', zIndex:60, animation:'fadeInUp 0.22s cubic-bezier(0.22, 1, 0.36, 1)', overflow:'hidden' };
+  const menuRow = (active) => ({ display:'flex', alignItems:'center', gap:14, padding:'13px 18px', color:PC.text, cursor:'pointer', borderRadius:10, margin:'2px 6px', background: active ? 'rgba(244,232,208,0.14)' : 'transparent', fontSize:14, fontWeight: active ? 700 : 500, transition:'background 0.15s' });
+
+  const PLAYLISTS = [
+    { name:'Morning Motivation', count:'24 tracks', col:'#FF8C42' },
+    { name:'Late Night Vibez',   count:'38 tracks', col:'#7B68EE' },
+    { name:'Chill Sundays',      count:'52 tracks', col:'#20B2AA' },
+    { name:'Own Lane Favorites', count:'17 tracks', col:PC.gold },
+    { name:'Workout Mode',       count:'31 tracks', col:'#E04B43' },
+  ];
+  const NOTIFS = [
+    { ico:'🎵', text:'JAY TRUE just released a new song "Better Days"', time:'5m' },
+    { ico:'❤️', text:'Luna Rose liked your comment', time:'15m' },
+    { ico:'👤', text:'Mike Beats started following you', time:'1h' },
+  ];
+  const CMNTS = [
+    { u:'RealMusicLover', a:'R', txt:'This track hits different 🔥', time:'2h', lk:24 },
+    { u:'DreamChaser_88', a:'D', txt:'The lyrics, the vibe, the message. Everything.', time:'3h', lk:18 },
+    { u:'KingVision',     a:'K', txt:'On repeat all day.', time:'5h', lk:12 },
   ];
 
-  const panelStyle = {
-    position:'fixed', bottom:0, left:'50%', transform:'translateX(-50%)',
-    width:390, background:`linear-gradient(180deg, ${C.card2} 0%, ${C.card} 100%)`,
-    borderRadius:'28px 28px 0 0', border:`1.5px solid ${C.lineBright}`,
-    boxShadow:`0 -20px 80px rgba(0,0,0,0.9), 0 0 60px rgba(199,154,58,0.1)`,
-    zIndex:200, maxHeight:'70vh', display:'flex', flexDirection:'column',
-    animation:'fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-  };
-
   return (
-    <div style={{ ...B.screen, background:`linear-gradient(180deg,${C.goldBg} 0%,${C.bg} 40%)` }}>
-      <Header title="Now Playing" onBack={() => setScreen(role === 'artist' ? 'artist' : 'home')} right={
-        <button onClick={() => { setFollowed(!followed); }} style={{ ...B.ghostBtn, padding:'6px 14px', fontSize:11, color: followed ? C.gold : C.goldBright, border:`1.5px solid ${followed ? C.gold : 'rgba(199,154,58,0.3)'}`, background: followed ? 'rgba(199,154,58,0.1)' : 'transparent' }}>
-          {followed ? '✓ Following' : '+ Follow'}
-        </button>
-      }/>
-      <div style={{ ...B.scroll, padding:'4px 22px 24px' }}>
-        {/* Album Art */}
-        <div style={{ aspectRatio:'1', borderRadius:20, border:`1px solid ${C.goldDim}`, background:`linear-gradient(135deg,#2A1F00,#1A1A1A,#111)`, display:'grid', placeItems:'center', marginBottom:18, position:'relative', overflow:'hidden' }}>
-          <span style={{ position:'absolute', inset:0, background:C.goldShimmer, backgroundSize:'200% 100%', animation:'shimmerFlow 6s linear infinite', opacity:0.06, pointerEvents:'none' }}></span>
-          <div style={{ width:160, height:160, borderRadius:'50%', border:`1px solid ${C.goldDim}`, display:'grid', placeItems:'center', animation:'floatSoft 6s ease-in-out infinite' }}>
-            <div style={{ width:75, height:75, borderRadius:'50%', border:`1px solid ${C.goldDim}`, display:'grid', placeItems:'center' }}>
-              <div style={{ width:22, height:22, borderRadius:'50%', background:C.gold, animation:'pulse 2s ease-in-out infinite' }}></div>
-            </div>
-          </div>
-          {/* OWNLN Exclusive badge */}
-          <div style={{ position:'absolute', top:12, right:12, background:C.goldGradient, color:'#000', fontSize:8, fontWeight:900, padding:'4px 10px', borderRadius:20, letterSpacing:1 }}>OWNLN EXCLUSIVE</div>
+    <div style={{ position:'relative', minHeight:'100vh', background:`radial-gradient(circle at 50% 38%, ${PC.bgCenter} 0%, ${PC.bg} 50%, ${PC.bgDeep} 100%)`, color:PC.text, display:'flex', flexDirection:'column', overflow:'hidden', fontFamily:'Roboto, Inter, sans-serif' }}>
+
+      {/* Grain texture overlay */}
+      <svg style={{ position:'absolute', inset:0, width:'100%', height:'100%', opacity:0.055, pointerEvents:'none', zIndex:0 }}><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grain)"/></svg>
+
+      {/* Status bar */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 22px 2px', zIndex:1, position:'relative', flexShrink:0 }}>
+        <span style={{ fontSize:15, fontWeight:700, color:PC.text }}>9:41</span>
+        <div style={{ display:'flex', gap:5, alignItems:'center' }}>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill={PC.text}><rect x="0" y="6.5" width="2.5" height="5.5" rx="1"/><rect x="4" y="4" width="2.5" height="8" rx="1"/><rect x="8" y="1.5" width="2.5" height="10.5" rx="1"/><rect x="12" y="0" width="2.5" height="12" rx="1"/></svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="none" stroke={PC.text} strokeWidth="1.5"><path d="M1.5 4.5C4 2.2 13 2.2 15.5 4.5M4 7C6 5.4 11 5.4 13 7M7 9.5C8 8.8 9 8.8 10 9.5"/><circle cx="8.5" cy="11.5" r="0.9" fill={PC.text}/></svg>
+          <div style={{ background:PC.text, borderRadius:3, padding:'2px 7px', fontSize:11, fontWeight:700, color:'#000' }}>89%</div>
         </div>
-
-        {/* Track info + actions */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:14 }}>
-          <div>
-            <div style={{ fontSize:24, fontWeight:900, fontFamily:'Inter Tight, Inter, sans-serif', letterSpacing:-0.5 }}>{t.title}</div>
-            <div style={{ color:C.mutedLight, fontSize:13, marginTop:2 }}>{t.artist}</div>
-            <div style={{ display:'flex', gap:6, marginTop:8 }}>
-              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10, padding:'6px 14px' }}>{t.mood}</span>
-              <span style={{ ...B.pill, background:C.card, color:C.muted, border:`1px solid ${C.line}`, fontSize:10, padding:'6px 14px' }}>{t.genre}</span>
-            </div>
-          </div>
-          <div style={{ display:'flex', flexDirection:'column', gap:10, alignItems:'center', paddingTop:4 }}>
-            <span onClick={() => setLiked(!liked)} style={{ fontSize:22, cursor:'pointer', color: liked ? C.gold : C.muted, filter: liked ? 'drop-shadow(0 0 8px rgba(199,154,58,0.5))' : 'none', transition:'all 0.3s' }}>{liked ? '♥' : '♡'}</span>
-            <span onClick={() => setSaved(!saved)} style={{ fontSize:20, cursor:'pointer', color: saved ? C.gold : C.muted, transition:'all 0.3s' }}>🔖</span>
-            <span style={{ fontSize:18, cursor:'pointer', color:C.muted }}>↗</span>
-          </div>
-        </div>
-
-        {/* Reaction bar */}
-        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:14, padding:'10px 14px', background:C.card, borderRadius:16, border:`1px solid ${C.line}` }}>
-          {REACTIONS.map(r => (
-            <span key={r} onClick={() => setReaction(reaction===r ? null : r)} style={{ fontSize:20, cursor:'pointer', transition:'all 0.2s', transform: reaction===r ? 'scale(1.4)' : 'scale(1)', filter: reaction===r ? 'drop-shadow(0 0 6px rgba(199,154,58,0.5))' : 'none' }}>{r}</span>
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div style={{ height:5, borderRadius:3, background:C.line, marginBottom:6, cursor:'pointer' }}>
-          <div style={{ width:'37%', height:'100%', background:C.goldGradient, borderRadius:3, position:'relative' }}>
-            <div style={{ position:'absolute', right:-5, top:'50%', transform:'translateY(-50%)', width:12, height:12, borderRadius:'50%', background:C.goldBright, boxShadow:`0 0 8px ${C.gold}` }}></div>
-          </div>
-        </div>
-        <div style={{ display:'flex', justifyContent:'space-between', color:C.muted, fontSize:11, marginBottom:22 }}><span>1:24</span><span>{t.duration}</span></div>
-
-        {/* Controls row with ±15s */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
-          <span style={{ color:C.muted, fontSize:16, cursor:'pointer' }}>⤮</span>
-          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:38, height:38, color:C.text, cursor:'pointer', fontSize:14, display:'grid', placeItems:'center' }}>⏮</button>
-          {/* -15s */}
-          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer', gap:2 }}>
-            <span style={{ fontSize:18, color:C.mutedLight }}>↺</span>
-            <span style={{ fontSize:8, color:C.muted, fontWeight:800, letterSpacing:0.5 }}>15</span>
-          </div>
-          <button onClick={() => setPlaying(!playing)} style={{ width:68, height:68, borderRadius:'50%', border:'none', background:C.goldGradient, display:'grid', placeItems:'center', fontSize:22, cursor:'pointer', boxShadow:`0 8px 32px rgba(199,154,58,0.5), 0 0 40px rgba(199,154,58,0.2)` }}>
-            {playing ? '⏸' : '▶'}
-          </button>
-          {/* +15s */}
-          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', cursor:'pointer', gap:2 }}>
-            <span style={{ fontSize:18, color:C.mutedLight }}>↻</span>
-            <span style={{ fontSize:8, color:C.muted, fontWeight:800, letterSpacing:0.5 }}>15</span>
-          </div>
-          <button style={{ background:'transparent', border:`1px solid ${C.line}`, borderRadius:'50%', width:38, height:38, color:C.text, cursor:'pointer', fontSize:14, display:'grid', placeItems:'center' }}>⏭</button>
-          <span style={{ color:C.muted, fontSize:16, cursor:'pointer' }}>⇄</span>
-        </div>
-
-        {/* Action row */}
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr 1fr', gap:8, marginBottom:16 }}>
-          <button onClick={() => { setShowQueue(!showQueue); setShowLyrics(false); setShowComments(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showQueue ? `1.5px solid ${C.gold}` : undefined, color: showQueue ? C.gold : C.goldBright }}>
-            <span style={{ fontSize:16 }}>☰</span><span>Queue</span>
-          </button>
-          <button onClick={() => { setShowLyrics(!showLyrics); setShowQueue(false); setShowComments(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showLyrics ? `1.5px solid ${C.gold}` : undefined, color: showLyrics ? C.gold : C.goldBright }}>
-            <span style={{ fontSize:16 }}>♪</span><span>Lyrics</span>
-          </button>
-          <button onClick={() => { setShowComments(!showComments); setShowQueue(false); setShowLyrics(false); setShowNotes(false); }} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: showComments ? `1.5px solid ${C.gold}` : undefined, color: showComments ? C.gold : C.goldBright }}>
-            <span style={{ fontSize:16 }}>💬</span><span>12</span>
-          </button>
-          <button onClick={() => setTipped(!tipped)} style={{ ...B.ghostBtn, padding:'10px 0', fontSize:10, fontWeight:800, letterSpacing:0.5, flexDirection:'column', display:'flex', alignItems:'center', gap:3, border: tipped ? `1.5px solid ${C.gold}` : undefined, color: tipped ? C.gold : C.goldBright, background: tipped ? 'rgba(199,154,58,0.1)' : undefined }}>
-            <span style={{ fontSize:16 }}>💰</span><span>{tipped ? 'Tipped!' : 'Tip'}</span>
-          </button>
-        </div>
-
-        {/* Artist Notes toggle */}
-        <button onClick={() => { setShowNotes(!showNotes); setShowQueue(false); setShowLyrics(false); setShowComments(false); }} style={{ ...B.ghostBtn, width:'100%', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 18px' }}>
-          <span style={{ fontSize:12, fontWeight:700 }}>📝 Story Behind This Track</span>
-          <span style={{ color:C.gold, fontSize:14 }}>{showNotes ? '▲' : '▼'}</span>
-        </button>
-        {showNotes && (
-          <div style={{ ...B.card, padding:18, marginBottom:8, animation:'fadeInUp 0.3s ease' }}>
-            <div style={{ fontSize:13, color:C.textSoft, lineHeight:1.8, marginBottom:14 }}>
-              "Midnight Gold was written at 3am after a long session that wasn't going anywhere. I sent everyone home, opened a new session, and in 45 minutes this was done. Sometimes the best music happens when you stop trying."
-            </div>
-            <div style={{ color:C.muted, fontSize:11, fontWeight:700 }}>— {t.artist}</div>
-            <div style={{ borderTop:`1px solid ${C.line}`, marginTop:12, paddingTop:12 }}>
-              <div style={{ fontSize:11, fontWeight:700, color:C.muted, letterSpacing:0.5, marginBottom:8 }}>CREDITS</div>
-              {[['Producer','Marcus Allen'],['Co-Writer','Maya Quinn'],['Mixed by','Noah Lane'],['Mastered by','Ari Vega']].map(([role, name]) => (
-                <div key={role} style={{ display:'flex', justifyContent:'space-between', fontSize:11, padding:'4px 0', borderBottom:`1px solid ${C.lineDim}` }}>
-                  <span style={{ color:C.muted }}>{role}</span>
-                  <span style={{ fontWeight:700 }}>{name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <button onClick={() => setScreen('library')} style={{ ...B.ghostBtn, width:'100%' }}>+ Add to Playlist</button>
       </div>
 
-      {/* Queue Panel */}
-      {showQueue && (
-        <div style={panelStyle}>
-          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
-            <div style={{ fontWeight:800, fontSize:16 }}>Up Next</div>
-            <button onClick={() => setShowQueue(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
+      {/* Top bar: Logo + Bell */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'2px 22px 8px', zIndex:1, position:'relative', flexShrink:0 }}>
+        <button onClick={() => setScreen(role === 'artist' ? 'artist' : 'home')} style={{ background:'none', border:'none', cursor:'pointer', padding:0 }}>
+          <div style={{ background:'#1E6B30', borderRadius:6, border:'2.5px solid rgba(255,255,255,0.92)', padding:'4px 12px', display:'inline-flex', alignItems:'baseline', gap:1, boxShadow:'0 3px 14px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.18)' }}>
+            <span style={{ color:'white', fontWeight:900, fontSize:17, letterSpacing:1.5, fontFamily:'Arial Black, Arial, sans-serif', lineHeight:1 }}>OWN</span>
+            <sup style={{ color:'white', fontWeight:900, fontSize:10, letterSpacing:0.8, verticalAlign:'super', lineHeight:1 }}>LN</sup>
+            <sup style={{ color:'rgba(255,255,255,0.75)', fontSize:7.5, fontWeight:700, marginLeft:2, verticalAlign:'super' }}>™</sup>
           </div>
-          <div style={{ overflowY:'auto', padding:'8px 16px 24px' }}>
-            {TRACKS.map((tr, i) => (
-              <div key={tr.id} style={{ ...B.card, padding:'12px 14px', marginBottom:8, display:'flex', alignItems:'center', gap:12, cursor:'pointer', border: i===0 ? `1.5px solid ${C.lineBright}` : undefined }}>
-                {i === 0 && <div style={{ width:4, height:40, borderRadius:4, background:C.goldGradient, flexShrink:0 }}></div>}
-                <span style={{ color:C.muted, fontSize:11, width:16, textAlign:'center', flexShrink:0 }}>{i+1}</span>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:700, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', color: i===0 ? C.gold : C.text }}>{tr.title}</div>
-                  <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{tr.artist}</div>
-                </div>
-                <span style={{ color:C.muted, fontSize:11 }}>{tr.duration}</span>
+        </button>
+        <button onClick={() => { closeAll(); setShowNotifications(!showNotifications); }} style={{ background:'none', border:'none', cursor:'pointer', position:'relative', padding:6, minWidth:44, minHeight:44, display:'grid', placeItems:'center' }}>
+          <svg width="26" height="28" viewBox="0 0 26 28" fill="none">
+            <path d="M13 2.5C8 2.5 6 7 6 13v4.5L4 20v1.5h18V20l-2-2.5V13C20 7 18 2.5 13 2.5z" stroke={PC.gold} strokeWidth="1.8" fill="none" strokeLinejoin="round"/>
+            <path d="M10.2 22c0 1.55 1.25 2.8 2.8 2.8s2.8-1.25 2.8-2.8" stroke={PC.gold} strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+          </svg>
+          <div style={{ position:'absolute', top:5, right:5, width:8, height:8, borderRadius:'50%', background:PC.gold, border:'1.5px solid #0E0B08' }}></div>
+        </button>
+      </div>
+
+      {/* Lyrics button */}
+      <div style={{ padding:'0 22px 10px', zIndex:1, position:'relative', flexShrink:0 }}>
+        <button style={{ background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:8, padding:'4px 0', minHeight:44 }}>
+          <svg width="24" height="22" viewBox="0 0 24 22" fill="none">
+            <path d="M6 18 Q7.5 15.5 9 13 Q10.5 10.5 12.5 9 Q14.5 7.5 16 5.5 Q17.5 3.5 16.5 2.5 Q15.5 1.5 13.5 3.5 Q11.5 5.5 10 8 Q8.5 10.5 7.5 13 Q6.5 15.5 6 18Z" fill={PC.gold} opacity="0.95"/>
+            <path d="M4 20 Q5.5 21.5 7 20 Q8.5 18.5 6 18" stroke={PC.gold} strokeWidth="1.4" fill="none" strokeLinecap="round"/>
+            <path d="M6 18 Q9 19 12 17.5 Q13 21 10 21.5" stroke={PC.gold} strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+          </svg>
+          <span style={{ color:PC.gold, fontSize:15, fontWeight:600, letterSpacing:0.3 }}>Lyrics</span>
+        </button>
+      </div>
+
+      {/* Album Artwork */}
+      <div style={{ padding:'0 20px', zIndex:1, position:'relative', flexShrink:0 }}>
+        <div style={{ width:'100%', aspectRatio:'1/1', borderRadius:20, background:'linear-gradient(155deg,#2A1808 0%,#1A1008 30%,#100A04 60%,#1C1200 100%)', boxShadow:'0 0 48px rgba(232,181,71,0.18), 0 24px 80px rgba(0,0,0,0.75)', border:'1px solid rgba(244,232,208,0.1)', display:'flex', alignItems:'center', justifyContent:'center', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, background:'radial-gradient(ellipse at 40% 25%, rgba(180,100,20,0.35) 0%, rgba(80,40,8,0.22) 40%, rgba(0,0,0,0.85) 80%)', pointerEvents:'none' }}></div>
+          <div style={{ position:'relative', zIndex:1, textAlign:'center', padding:20 }}>
+            <div style={{ fontSize:60, marginBottom:12, filter:'drop-shadow(0 0 24px rgba(232,181,71,0.5))' }}>🎵</div>
+            <div style={{ color:'rgba(244,232,208,0.75)', fontSize:20, fontWeight:900, letterSpacing:3, textTransform:'uppercase', fontFamily:'Georgia, serif', fontStyle:'italic', textShadow:'0 2px 12px rgba(0,0,0,0.8)' }}>Still Dreaming</div>
+            <div style={{ color:PC.gold, fontSize:11, fontWeight:800, marginTop:5, letterSpacing:3, textTransform:'uppercase', opacity:0.85 }}>JAY TRUE</div>
+          </div>
+          <div style={{ position:'absolute', top:12, right:12, background:'linear-gradient(135deg,#E6B857,#C79A3A)', color:'#000', fontSize:8, fontWeight:900, padding:'4px 11px', borderRadius:20, letterSpacing:1, boxShadow:'0 4px 18px rgba(232,181,71,0.45)' }}>OWNLN EXCLUSIVE</div>
+          <div style={{ position:'absolute', bottom:0, left:0, right:0, height:'45%', background:'linear-gradient(0deg, rgba(14,11,8,0.9) 0%, transparent 100%)', pointerEvents:'none' }}></div>
+        </div>
+      </div>
+
+      {/* Track Info Row */}
+      <div style={{ padding:'14px 22px 0', zIndex:1, position:'relative', flexShrink:0, display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+        <div style={{ flex:1, minWidth:0, paddingRight:10 }}>
+          <div style={{ fontSize:28, fontWeight:800, color:PC.text, letterSpacing:-0.5, lineHeight:1.15 }}>{t.title || 'Still Dreaming'}</div>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginTop:6 }}>
+            <span style={{ color:PC.muted, fontSize:13, fontWeight:600, letterSpacing:1, textTransform:'uppercase' }}>{t.artist || 'JAY TRUE'}</span>
+            <button onClick={() => setFollowed(!followed)} style={{ background:'transparent', border:`1.5px solid ${followed ? PC.gold : 'rgba(244,232,208,0.45)'}`, color: followed ? PC.gold : 'rgba(244,232,208,0.75)', borderRadius:7, padding:'3px 11px', fontSize:12, fontWeight:700, cursor:'pointer', letterSpacing:0.3, transition:'all 0.2s' }}>
+              {followed ? 'Following' : 'Follow'}
+            </button>
+          </div>
+        </div>
+        <button onClick={() => { closeAll(); setShowTip(true); }} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:3, padding:4, flexShrink:0 }}>
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none" stroke={PC.gold} strokeWidth="1.65" strokeLinecap="round">
+            <ellipse cx="19" cy="23" rx="11" ry="9"/>
+            <circle cx="27" cy="18" r="3.8"/>
+            <path d="M9 23 Q5.5 22 5.5 18 Q5.5 14 9 14"/>
+            <circle cx="15" cy="22" r="1.3" fill={PC.gold} stroke="none"/>
+            <path d="M23 14 Q23 10 19 10 Q16 10 16 12"/>
+            <path d="M27 28 Q30 31 29 33"/>
+            <path d="M24 29 Q25 32 24 34"/>
+          </svg>
+          <span style={{ color:PC.gold, fontSize:11, fontWeight:700, letterSpacing:0.5 }}>Tip</span>
+        </button>
+      </div>
+
+      {/* Progress Bar */}
+      <div style={{ padding:'12px 22px 0', zIndex:1, position:'relative', flexShrink:0 }}>
+        <div style={{ height:4, borderRadius:999, background:'rgba(244,232,208,0.15)', cursor:'pointer', position:'relative' }}>
+          <div style={{ width:'37%', height:'100%', background:PC.gold, borderRadius:999, position:'relative' }}>
+            <div style={{ position:'absolute', right:-6, top:'50%', transform:'translateY(-50%)', width:13, height:13, borderRadius:'50%', background:PC.gold, boxShadow:`0 0 10px ${PC.gold}, 0 0 24px rgba(232,181,71,0.55)` }}></div>
+          </div>
+        </div>
+        <div style={{ display:'flex', justifyContent:'space-between', marginTop:7 }}>
+          <span style={{ color:PC.muted, fontSize:12, fontWeight:500 }}>1:24</span>
+          <span style={{ color:PC.muted, fontSize:12, fontWeight:500 }}>{t.duration || '3:58'}</span>
+        </div>
+      </div>
+
+      {/* Playback Controls: Shuffle | ↺15 | Play/Pause | ↻15 | Repeat */}
+      <div style={{ padding:'6px 22px 0', zIndex:1, position:'relative', flexShrink:0, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        <button style={{ background:'none', border:'none', cursor:'pointer', padding:8, minWidth:44, minHeight:44, display:'grid', placeItems:'center' }}>
+          <svg width="24" height="18" viewBox="0 0 24 18" fill="none" stroke={PC.goldSoft} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M1 1h5l12 16h4M17 1h4M21 1v4M1 17h5l3-4M17 17h4M21 17v-4"/>
+          </svg>
+        </button>
+        <button style={{ background:'none', border:'none', cursor:'pointer', position:'relative', width:48, height:48, display:'grid', placeItems:'center' }}>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke={PC.text} strokeWidth="1.8" strokeLinecap="round">
+            <path d="M30 9C27 6 23 4 19 4C11.3 4 5 10.3 5 18s6.3 14 14 14c6.2 0 11.6-4 13.5-9.6"/>
+            <path d="M30 9v6h-6"/>
+          </svg>
+          <span style={{ position:'absolute', fontSize:9.5, fontWeight:900, color:PC.text, letterSpacing:0.3, top:'53%', left:'50%', transform:'translate(-50%,-50%)' }}>15</span>
+        </button>
+        <button onClick={() => setPlaying(!playing)} style={{ width:84, height:84, borderRadius:'50%', border:'none', background:'radial-gradient(circle at 35% 30%, #FFD06A 0%, #E8B547 55%, #B87924 100%)', display:'grid', placeItems:'center', cursor:'pointer', boxShadow:'0 8px 36px rgba(232,181,71,0.6), 0 4px 16px rgba(184,121,36,0.45), 0 0 64px rgba(232,181,71,0.22)', transition:'transform 0.12s', flexShrink:0 }}>
+          {playing
+            ? <svg width="28" height="28" viewBox="0 0 28 28" fill="#070707"><rect x="7" y="5" width="5" height="18" rx="2.5"/><rect x="16" y="5" width="5" height="18" rx="2.5"/></svg>
+            : <svg width="28" height="28" viewBox="0 0 28 28" fill="#070707"><path d="M8 4l18 10L8 24z"/></svg>
+          }
+        </button>
+        <button style={{ background:'none', border:'none', cursor:'pointer', position:'relative', width:48, height:48, display:'grid', placeItems:'center' }}>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke={PC.text} strokeWidth="1.8" strokeLinecap="round">
+            <path d="M10 9C13 6 17 4 21 4C28.7 4 35 10.3 35 18s-6.3 14-14 14c-6.2 0-11.6-4-13.5-9.6"/>
+            <path d="M10 9v6h6"/>
+          </svg>
+          <span style={{ position:'absolute', fontSize:9.5, fontWeight:900, color:PC.text, letterSpacing:0.3, top:'53%', left:'50%', transform:'translate(-50%,-50%)' }}>15</span>
+        </button>
+        <button style={{ background:'none', border:'none', cursor:'pointer', padding:8, minWidth:44, minHeight:44, display:'grid', placeItems:'center' }}>
+          <svg width="24" height="20" viewBox="0 0 24 20" fill="none" stroke={PC.goldSoft} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 5h15a4 4 0 014 4v1M22 13H7a4 4 0 01-4-4V8"/>
+            <path d="M19 2l3 3-3 3"/>
+            <path d="M5 17l-3-3 3-3"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Bottom Social Row: Like · Comments · Share · More */}
+      <div style={{ padding:'14px 14px 40px', zIndex:1, position:'relative', flexShrink:0, display:'flex', justifyContent:'space-around', alignItems:'center' }}>
+        <button onClick={() => setLiked(!liked)} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:5, padding:8, minWidth:52, minHeight:52 }}>
+          <svg width="28" height="26" viewBox="0 0 28 26" fill={liked ? PC.gold : 'none'} stroke={liked ? PC.gold : 'rgba(244,232,208,0.65)'} strokeWidth="1.8" strokeLinejoin="round">
+            <path d="M14 23S3 16 3 9a6 6 0 0110-4.5A6 6 0 0125 9c0 7-11 14-11 14z"/>
+          </svg>
+          <span style={{ color:'rgba(244,232,208,0.65)', fontSize:12 }}>Like</span>
+        </button>
+        <button onClick={() => { closeAll(); setShowComments(true); }} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:5, padding:8, minWidth:52, minHeight:52 }}>
+          <svg width="28" height="26" viewBox="0 0 28 26" fill="none" stroke={PC.gold} strokeWidth="1.8" strokeLinejoin="round">
+            <path d="M4 3h20a2 2 0 012 2v11a2 2 0 01-2 2H9l-6 5V5a2 2 0 012-2z"/>
+          </svg>
+          <span style={{ color:'rgba(244,232,208,0.65)', fontSize:12 }}>Comments</span>
+        </button>
+        <button onClick={() => { closeAll(); setShowShare(true); }} style={{ background:'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:5, padding:8, minWidth:52, minHeight:52 }}>
+          <svg width="28" height="26" viewBox="0 0 28 26" fill="none" stroke={PC.gold} strokeWidth="1.8">
+            <circle cx="21" cy="5" r="2.8"/><circle cx="7" cy="13" r="2.8"/><circle cx="21" cy="21" r="2.8"/>
+            <line x1="9.5" y1="11.5" x2="18.5" y2="6.5"/><line x1="9.5" y1="14.5" x2="18.5" y2="19.5"/>
+          </svg>
+          <span style={{ color:'rgba(244,232,208,0.65)', fontSize:12 }}>Share</span>
+        </button>
+        <button onClick={() => { if(showMore){ closeAll(); } else { closeAll(); setShowMore(true); } }} style={{ background: showMore ? 'rgba(244,232,208,0.1)' : 'none', border:'none', cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:5, padding:8, minWidth:52, minHeight:52, borderRadius:14, transition:'background 0.15s' }}>
+          <svg width="28" height="26" viewBox="0 0 28 26" fill="none" stroke={showMore ? PC.gold : 'rgba(244,232,208,0.65)'} strokeWidth="1.8">
+            <circle cx="14" cy="13" r="11"/>
+            <circle cx="9.5" cy="13" r="1.4" fill={showMore ? PC.gold : 'rgba(244,232,208,0.65)'} stroke="none"/>
+            <circle cx="14" cy="13" r="1.4" fill={showMore ? PC.gold : 'rgba(244,232,208,0.65)'} stroke="none"/>
+            <circle cx="18.5" cy="13" r="1.4" fill={showMore ? PC.gold : 'rgba(244,232,208,0.65)'} stroke="none"/>
+          </svg>
+          <span style={{ color: showMore ? PC.gold : 'rgba(244,232,208,0.65)', fontSize:12 }}>More</span>
+        </button>
+      </div>
+
+      {/* ── OVERLAY DIM ── */}
+      {anyOverlay && <div onClick={closeAll} style={overlayDim}></div>}
+
+      {/* ── MORE MENU (floating bottom-right, NOT full sheet) ── */}
+      {showMore && (
+        <div style={{ ...floatingPanel, bottom:108, right:18, width:268 }}>
+          {[
+            { ico:'➕', lbl:'Add to Playlist', active:true, fn:() => { setShowPlaylistMenu(true); } },
+            { ico:'👤', lbl:'View Artist Profile', active:false, fn:() => { closeAll(); setScreen('artistpublic'); } },
+            { ico:'💿', lbl:'Go to Album', active:false, fn:closeAll },
+            { ico:'☰', lbl:'Queue / Up Next', active:false, fn:closeAll },
+            { ico:'➖', lbl:'Remove from Queue', active:false, fn:closeAll },
+          ].map((item,i) => (
+            <div key={i} onClick={item.fn} style={menuRow(item.active)}>
+              <span style={{ width:22, textAlign:'center', fontSize:16 }}>{item.ico}</span>
+              <span style={{ flex:1 }}>{item.lbl}</span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(244,232,208,0.38)" strokeWidth="1.5"><path d="M5 3l4 4-4 4"/></svg>
+            </div>
+          ))}
+          <div style={{ height:1, background:'rgba(244,232,208,0.1)', margin:'4px 6px' }}></div>
+          <div onClick={closeAll} style={menuRow(false)}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="rgba(244,232,208,0.7)" strokeWidth="1.5"><rect x="2" y="8" width="2" height="8" rx="1"/><rect x="6" y="5" width="2" height="11" rx="1"/><rect x="10" y="2" width="2" height="14" rx="1"/><rect x="14" y="5" width="2" height="11" rx="1"/></svg>
+            <span style={{ flex:1 }}>Audio Quality</span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(244,232,208,0.38)" strokeWidth="1.5"><path d="M5 3l4 4-4 4"/></svg>
+          </div>
+          <div style={{ height:1, background:'rgba(244,232,208,0.1)', margin:'4px 6px' }}></div>
+          <div onClick={closeAll} style={{ ...menuRow(false), color:'#E04B43' }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#E04B43" strokeWidth="1.5"><path d="M4 6h12M8 6V4h4v2"/><rect x="5" y="6" width="10" height="11" rx="2"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="12" y1="10" x2="12" y2="14"/></svg>
+            <span style={{ flex:1, color:'#E04B43' }}>Report Track</span>
+          </div>
+        </div>
+      )}
+
+      {/* ── ADD TO PLAYLIST SUBMENU (floats to the left) ── */}
+      {showPlaylistMenu && (
+        <div style={{ ...floatingPanel, bottom:220, left:16, right:'auto', width:246 }}>
+          <div onClick={closeAll} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 18px', color:PC.gold, fontWeight:700, fontSize:14, cursor:'pointer', borderBottom:'1px solid rgba(244,232,208,0.1)' }}>
+            <span style={{ fontSize:18, fontWeight:900 }}>＋</span><span>Create Playlist</span>
+          </div>
+          {PLAYLISTS.map((pl,i) => (
+            <div key={i} onClick={closeAll} style={{ display:'flex', alignItems:'center', gap:12, padding:'11px 16px', cursor:'pointer' }}>
+              <div style={{ width:40, height:40, borderRadius:9, background:`linear-gradient(135deg,${pl.col}35,${pl.col}18)`, border:`1.5px solid ${pl.col}38`, display:'grid', placeItems:'center', fontSize:16, flexShrink:0 }}>🎵</div>
+              <div style={{ flex:1, minWidth:0 }}>
+                <div style={{ fontSize:13, fontWeight:600, color:PC.text, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{pl.name}</div>
+                <div style={{ fontSize:11, color:PC.muted, marginTop:1 }}>{pl.count}</div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Lyrics Panel */}
-      {showLyrics && (
-        <div style={panelStyle}>
-          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
-            <div>
-              <div style={{ fontWeight:800, fontSize:16 }}>Lyrics</div>
-              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>{t.title} · {t.artist}</div>
             </div>
-            <button onClick={() => setShowLyrics(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
-          </div>
-          <div style={{ overflowY:'auto', padding:'16px 20px 40px', lineHeight:2.2, fontSize:14 }}>
-            {[
-              { text:'I built this from nothing', active:true },
-              { text:'Gold in my veins not a ceiling', active:false },
-              { text:'Every door that was closed', active:false },
-              { text:"I found a way, I wasn't leaving", active:false },
-              { text:'', active:false },
-              { text:'Midnight gold, midnight gold', active:false },
-              { text:'Shining through the stories untold', active:false },
-              { text:'Midnight gold, midnight gold', active:false },
-              { text:'Everything I touch turns to gold', active:false },
-              { text:'', active:false },
-              { text:'They said wait your turn', active:false },
-              { text:"I said I don't take orders", active:false },
-              { text:'Ownership on every bar', active:false },
-              { text:'No label at my borders', active:false },
-            ].map((line, i) => (
-              <div key={i} style={{ color: line.active ? C.textSoft : C.muted, fontWeight: line.active ? 800 : 400, fontSize: line.active ? 15 : 13, transition:'all 0.3s', filter: line.active ? 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' : 'none', letterSpacing: line.active ? 0.2 : 0 }}>{line.text || <br/>}</div>
-            ))}
-            <div style={{ marginTop:16, paddingTop:12, borderTop:`1px solid ${C.line}`, color:C.muted, fontSize:11 }}>Written by Marcus Allen · Maya Quinn</div>
-          </div>
+          ))}
         </div>
       )}
 
-      {/* Comments Panel */}
+      {/* ── SHARE PANEL ── */}
+      {showShare && (
+        <div style={{ ...floatingPanel, bottom:108, right:18, width:268 }}>
+          <div style={{ padding:'16px 18px 10px', borderBottom:'1px solid rgba(244,232,208,0.1)' }}>
+            <div style={{ fontSize:16, fontWeight:700, color:PC.text }}>Share</div>
+          </div>
+          {[['🔗','Copy Link'],['💬','WhatsApp'],['📷','Instagram Stories'],['📬','Instagram Direct'],['📘','Facebook'],['✖️','X / Twitter'],['💌','Message'],['📧','Email'],['⋯','More Options']].map(([ico,lbl],i) => (
+            <div key={i} onClick={closeAll} style={{ display:'flex', alignItems:'center', gap:14, padding:'12px 18px', cursor:'pointer' }}>
+              <span style={{ fontSize:18, width:26, textAlign:'center' }}>{ico}</span>
+              <span style={{ flex:1, fontSize:14, color:PC.text }}>{lbl}</span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(244,232,208,0.35)" strokeWidth="1.5"><path d="M5 3l4 4-4 4"/></svg>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── COMMENTS PANEL ── */}
       {showComments && (
-        <div style={panelStyle}>
-          <div style={{ padding:'20px 20px 12px', display:'flex', justifyContent:'space-between', alignItems:'center', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
-            <div>
-              <div style={{ fontWeight:800, fontSize:16 }}>Fan Comments</div>
-              <div style={{ color:C.muted, fontSize:11, marginTop:2 }}>12 comments</div>
-            </div>
-            <button onClick={() => setShowComments(false)} style={{ background:'transparent', border:'none', color:C.muted, cursor:'pointer', fontSize:20 }}>✕</button>
+        <div style={{ ...floatingPanel, bottom:108, right:18, width:268 }}>
+          <div style={{ padding:'16px 18px 8px', borderBottom:'1px solid rgba(244,232,208,0.1)' }}>
+            <div style={{ fontSize:16, fontWeight:700, color:PC.text }}>Comments</div>
+            <div style={{ fontSize:11, color:PC.muted, marginTop:2 }}>Top Comments</div>
           </div>
-          <div style={{ padding:'8px 16px', borderBottom:`1px solid ${C.line}`, flexShrink:0 }}>
-            <input style={{ ...B.input, padding:'12px 16px', fontSize:13 }} placeholder="Add a comment..." />
-          </div>
-          <div style={{ overflowY:'auto', padding:'8px 16px 24px' }}>
-            {COMMENTS.map((c, i) => (
-              <div key={i} style={{ ...B.card, padding:'12px 14px', marginBottom:8 }}>
+          <div style={{ maxHeight:280, overflowY:'auto' }}>
+            {CMNTS.map((c,i) => (
+              <div key={i} style={{ padding:'12px 16px', borderBottom:'1px solid rgba(244,232,208,0.07)' }}>
                 <div style={{ display:'flex', gap:10, alignItems:'flex-start' }}>
-                  <div style={{ width:34, height:34, borderRadius:'50%', background:`linear-gradient(135deg,${C.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:C.bg, fontSize:11, flexShrink:0 }}>{c.user[0]}</div>
+                  <div style={{ width:32, height:32, borderRadius:'50%', background:`linear-gradient(135deg,${PC.gold},#8A6A18)`, display:'grid', placeItems:'center', fontWeight:900, color:'#000', fontSize:11, flexShrink:0 }}>{c.a}</div>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
-                      <span style={{ fontWeight:700, fontSize:12 }}>{c.user}</span>
-                      {c.badge && <span style={{ background:C.goldBg, color:C.gold, fontSize:8, fontWeight:900, padding:'2px 7px', borderRadius:10, border:`1px solid ${C.lineBright}`, letterSpacing:0.5 }}>{c.badge}</span>}
-                      <span style={{ color:C.muted, fontSize:10, marginLeft:'auto' }}>{c.time}</span>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:3 }}>
+                      <span style={{ fontWeight:700, fontSize:12, color:PC.text }}>{c.u}</span>
+                      <span style={{ color:PC.muted, fontSize:10 }}>{c.time}</span>
                     </div>
-                    <div style={{ color:C.textSoft, fontSize:12, lineHeight:1.5 }}>{c.text}</div>
-                    <div style={{ display:'flex', gap:12, marginTop:8 }}>
-                      <span style={{ color:C.muted, fontSize:11, cursor:'pointer' }}>♡ 4</span>
-                      <span style={{ color:C.muted, fontSize:11, cursor:'pointer' }}>Reply</span>
+                    <div style={{ color:'rgba(244,232,208,0.8)', fontSize:12, lineHeight:1.5 }}>{c.txt}</div>
+                    <div style={{ display:'flex', gap:12, marginTop:6 }}>
+                      <span style={{ color:PC.muted, fontSize:11, cursor:'pointer' }}>Reply</span>
+                      <span style={{ color:PC.muted, fontSize:11, cursor:'pointer' }}>♡ {c.lk}</span>
                     </div>
                   </div>
                 </div>
               </div>
             ))}
+            <div style={{ padding:'10px 16px' }}><span style={{ color:PC.gold, fontSize:12, cursor:'pointer' }}>View all 36 comments</span></div>
+          </div>
+          <div style={{ padding:'10px 14px', borderTop:'1px solid rgba(244,232,208,0.1)', display:'flex', gap:8, alignItems:'center' }}>
+            <input style={{ flex:1, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(244,232,208,0.15)', borderRadius:20, padding:'10px 14px', color:PC.text, fontSize:12, outline:'none' }} placeholder="Add a comment…"/>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill={PC.gold} style={{ cursor:'pointer', flexShrink:0 }}><path d="M2 11L20 3l-8 18-2-8z"/></svg>
           </div>
         </div>
       )}
 
-      {/* Tip Panel */}
-      {tipped && (
-        <div style={{ ...panelStyle, maxHeight:'auto' }}>
-          <div style={{ padding:'24px 20px' }}>
-            <div style={{ textAlign:'center', marginBottom:20 }}>
-              <div style={{ fontSize:40, marginBottom:8 }}>💰</div>
-              <div style={{ fontWeight:900, fontSize:18, background:C.goldGradient, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Tip Marcus Allen</div>
-              <div style={{ color:C.muted, fontSize:12, marginTop:4 }}>100% goes directly to the artist</div>
-            </div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:16 }}>
-              {['$1','$3','$5','$10','$20','Custom'].map(amt => (
-                <button key={amt} style={{ ...B.ghostBtn, padding:'14px 0', fontSize:12, fontWeight:800 }}>{amt}</button>
+      {/* ── TIP PANEL ── */}
+      {showTip && (
+        <div style={{ ...floatingPanel, bottom:108, right:18, width:268 }}>
+          <div style={{ padding:'20px 18px 14px', textAlign:'center', borderBottom:'1px solid rgba(244,232,208,0.1)' }}>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke={PC.gold} strokeWidth="1.7" strokeLinecap="round" style={{ margin:'0 auto 10px' }}>
+              <ellipse cx="24" cy="30" rx="13" ry="10"/><circle cx="34" cy="24" r="4.5"/>
+              <path d="M12 30 Q8 29 8 24 Q8 19 12 19"/>
+              <circle cx="19" cy="29" r="1.6" fill={PC.gold} stroke="none"/>
+              <path d="M29 18 Q29 13 24 13 Q21 13 21 15" />
+              <path d="M34 37 Q37 41 36 43"/><path d="M30 38 Q31 42 30 44"/>
+            </svg>
+            <div style={{ fontSize:17, fontWeight:800, color:PC.text, marginBottom:5 }}>Tip the Artist</div>
+            <div style={{ fontSize:12, color:PC.muted, lineHeight:1.55 }}>Show your support and help the artist keep creating.</div>
+          </div>
+          <div style={{ padding:'14px 16px' }}>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:12 }}>
+              {['$1','$3','$5','$10','$20','$50'].map(amt => (
+                <button key={amt} onClick={() => setSelectedTip(amt)} style={{ background: selectedTip===amt ? `linear-gradient(135deg,${PC.gold},#C79A3A)` : 'rgba(244,232,208,0.07)', color: selectedTip===amt ? '#000' : PC.text, border: selectedTip===amt ? 'none' : '1px solid rgba(244,232,208,0.18)', borderRadius:10, padding:'12px 0', fontSize:13, fontWeight:800, cursor:'pointer', transition:'all 0.15s' }}>{amt}</button>
               ))}
             </div>
-            <button onClick={() => setTipped(false)} style={{ ...B.goldBtn, width:'100%', marginBottom:10, fontSize:13 }}>SEND TIP 💰</button>
-            <button onClick={() => setTipped(false)} style={{ ...B.ghostBtn, width:'100%', fontSize:12 }}>Cancel</button>
+            <input style={{ width:'100%', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(244,232,208,0.15)', borderRadius:10, padding:'11px 14px', color:PC.text, fontSize:13, outline:'none', marginBottom:12, boxSizing:'border-box' }} placeholder="Custom Amount"/>
+            <button onClick={closeAll} style={{ width:'100%', background:`linear-gradient(135deg,${PC.gold},#C79A3A)`, color:'#000', border:'none', borderRadius:30, padding:'14px 0', fontSize:14, fontWeight:900, cursor:'pointer', letterSpacing:0.8 }}>Send Tip</button>
+            <div style={{ display:'flex', alignItems:'center', gap:6, marginTop:10, justifyContent:'center' }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={PC.muted} strokeWidth="1.2"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm0 3v3l2 2"/></svg>
+              <span style={{ color:PC.muted, fontSize:11 }}>100% of your tip goes directly to the artist.</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── NOTIFICATIONS PANEL ── */}
+      {showNotifications && (
+        <div style={{ ...floatingPanel, top:90, right:18, bottom:'auto', width:268 }}>
+          <div style={{ padding:'16px 18px 10px', borderBottom:'1px solid rgba(244,232,208,0.1)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <div style={{ fontSize:16, fontWeight:700, color:PC.text }}>Notifications</div>
+            <button onClick={closeAll} style={{ background:'none', border:'none', color:PC.muted, cursor:'pointer', fontSize:18, lineHeight:1 }}>✕</button>
+          </div>
+          <div style={{ padding:'10px 16px 4px' }}>
+            <div style={{ fontSize:10, color:PC.muted, fontWeight:700, letterSpacing:1, marginBottom:8 }}>NEW</div>
+            {NOTIFS.map((n,i) => (
+              <div key={i} style={{ display:'flex', gap:10, padding:'8px 0', borderBottom:'1px solid rgba(244,232,208,0.06)' }}>
+                <div style={{ width:34, height:34, borderRadius:'50%', background:'rgba(244,232,208,0.07)', display:'grid', placeItems:'center', fontSize:16, flexShrink:0 }}>{n.ico}</div>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:12, color:PC.text, lineHeight:1.45 }}>{n.text}</div>
+                  <div style={{ fontSize:10, color:PC.muted, marginTop:2 }}>{n.time}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ padding:'10px 16px 6px' }}>
+            <div style={{ fontSize:10, color:PC.muted, fontWeight:700, letterSpacing:1, marginBottom:8 }}>EARLIER</div>
+            <div style={{ display:'flex', gap:10, padding:'8px 0' }}>
+              <div style={{ width:34, height:34, borderRadius:'50%', background:'#1E6B30', border:'2px solid white', display:'grid', placeItems:'center', fontSize:8, fontWeight:900, color:'white', flexShrink:0, letterSpacing:0.5 }}>OWN</div>
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:12, color:PC.text, lineHeight:1.45 }}>OwnLn weekly playlist updated</div>
+                <div style={{ fontSize:10, color:PC.muted, marginTop:2 }}>3h</div>
+              </div>
+            </div>
+          </div>
+          <div style={{ padding:'10px 16px 16px', borderTop:'1px solid rgba(244,232,208,0.1)' }}>
+            <button onClick={closeAll} style={{ width:'100%', background:'none', border:`1px solid ${PC.gold}`, color:PC.gold, borderRadius:20, padding:'10px 0', fontSize:12, fontWeight:700, cursor:'pointer' }}>Mark all as read</button>
           </div>
         </div>
       )}
     </div>
   );
 };
-
 /* ══════════════════════════════════════════════════
    PODCAST — Show → Season → Episode → Detail
 ══════════════════════════════════════════════════ */
